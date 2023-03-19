@@ -20,7 +20,7 @@ function Header() {
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <LinkContainer to="/">
+          <LinkContainer to={userInfo?._id ? "/dashboard" : "/"}>
             <Navbar.Brand>E-Voting</Navbar.Brand>
           </LinkContainer>
 
