@@ -31,7 +31,7 @@ const ElectionScreen = () => {
   return (
     <div>
       <Meta title={election?.name} />
-      <Link className="btn btn-light my-3" to="/">
+      <Link className="btn btn-light my-3" to="/dashboard">
         Go Back
       </Link>
       {loading ? (

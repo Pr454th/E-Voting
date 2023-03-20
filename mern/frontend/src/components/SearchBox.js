@@ -10,6 +10,8 @@ const SearchBox = () => {
     e.preventDefault();
     if (keyword.trim()) {
       history(`/search/${keyword}`);
+    } else {
+      history(`/dashboard`);
     }
   };
 
