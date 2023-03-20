@@ -4,6 +4,7 @@ const colors = require("colors");
 const { connectDB } = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleWare");
 const userRoutes = require("./routes/userRoutes");
+const electionRoutes = require("./routes/electionRoutes");
 
 require("dotenv").config();
 const app = express();
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", userRoutes);
+app.use("/api/elections", electionRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

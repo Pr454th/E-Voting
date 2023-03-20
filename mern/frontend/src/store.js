@@ -7,12 +7,20 @@ import {
   userDetailsReducer,
   userUpdateProfileReducer,
 } from "./reducers/userReducers";
+import {
+  electionDetailsReducer,
+  electionListsReducer,
+} from "./reducers/electionReducers";
+import { walletDetailsReducer } from "./reducers/walletReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateProfileReducer,
+  electionDetails: electionDetailsReducer,
+  electionList: electionListsReducer,
+  walletDetails: walletDetailsReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
