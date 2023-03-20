@@ -8,6 +8,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ResultScreen from "./screens/ResultScreen";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route element={<RegisterScreen />} path="/register"></Route>
             <Route element={<DashboardScreen />} path="/dashboard"></Route>
             <Route element={<ProfileScreen />} path="/profile"></Route>
+            <Route element={<ResultScreen />} path="/result"></Route>
           </Routes>
         </Container>
       </main>
