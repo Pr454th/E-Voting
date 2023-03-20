@@ -11,9 +11,11 @@ const Election = ({ election }) => {
         </Card.Title>
         <Card.Text as="div"></Card.Text>
         <Card.Text as="h3">{election.description}</Card.Text>
-        <Button className="my-3" type="submit" variant="primary">
-          View
-        </Button>
+        <Link to={`/elections/${election._id}`}>
+          <Button className="my-3" type="submit" variant="primary">
+            View
+          </Button>
+        </Link>
       </Card.Body>
     </Card>
   );

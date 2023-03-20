@@ -1,16 +1,14 @@
 const express = require("express");
-const router = express.Router();
 const {
-  getElectionResult,
+  getElectionById,
   getElections,
 } = require("../controllers/electionController");
 const { protect, admin } = require("../middleware/authMiddleWare");
 
-//Election Result
-//Election ID-id
-router.route("/result/:id").get(getElectionResult);
+const router = express.Router();
 
-//Elections list
-router.route("/").get(getElections);
+router.route("/").get(protect, getElections);
+
+router.route("/:id").get(protect, getElectionById);
 
 module.exports = router;

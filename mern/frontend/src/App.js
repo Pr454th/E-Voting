@@ -9,6 +9,7 @@ import HomeScreen from "./screens/HomeScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ResultScreen from "./screens/ResultScreen";
+import ElectionScreen from "./screens/ElectionScreen";
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
             <Route element={<RegisterScreen />} path="/register"></Route>
             <Route element={<DashboardScreen />} path="/dashboard"></Route>
             <Route element={<ProfileScreen />} path="/profile"></Route>
-            <Route element={<ResultScreen />} path="/result"></Route>
+            <Route element={<ElectionScreen />} path="/elections/:id"></Route>
+            <Route element={<ResultScreen />} path="/result/:id"></Route>
           </Routes>
         </Container>
       </main>

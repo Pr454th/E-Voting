@@ -8,6 +8,19 @@ import {
   ELECTION_LIST_FAIL,
 } from "../constants/electionConstants";
 
+export const electionListReducer = (state = { elections: [] }, action) => {
+  switch (action.type) {
+    case ELECTION_LIST_REQUEST:
+      return { ...state, loading: true };
+    case ELECTION_LIST_SUCCESS:
+      return { loading: false, elections: action.payload };
+    case ELECTION_LIST_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
 export const electionDetailsReducer = (state = { election: {} }, action) => {
   switch (action.type) {
     case ELECTION_DETAILS_REQUEST:
@@ -18,19 +31,6 @@ export const electionDetailsReducer = (state = { election: {} }, action) => {
       return { loading: false, error: action.payload };
     case ELECTION_DETAILS_RESET:
       return { election: {} };
-    default:
-      return state;
-  }
-};
-
-export const electionListsReducer = (state = { elections: [] }, action) => {
-  switch (action.type) {
-    case ELECTION_LIST_REQUEST:
-      return { ...state, loading: true };
-    case ELECTION_LIST_SUCCESS:
-      return { loading: false, elections: action.payload };
-    case ELECTION_LIST_FAIL:
-      return { loading: false, error: action.payload };
     default:
       return state;
   }

@@ -1,19 +1,6 @@
 const Election = require("../models/electionModel");
 const asyncHandler = require("express-async-handler");
 
-const getElectionResult = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  const candidates = await Election.findById(id, { candidates: 1 });
-  if (candidates) {
-    res.status(200).json({
-      candidates: candidates,
-    });
-  } else {
-    res.status(404);
-    throw new Error("Elections not found");
-  }
-});
-
 const getElections = asyncHandler(async (req, res) => {
   const keyword = req.query.keyword
     ? {
@@ -24,11 +11,21 @@ const getElections = asyncHandler(async (req, res) => {
       }
     : {};
   const elections = await Election.find({ ...keyword });
-  res.status(200).json(elections);
-  console.log(elections);
+  res.json(elections);
+});
+
+const getElectionById = asyncHandler(async (req, res) => {
+  const election = await Election.findById(req.params.id);
+
+  if (election) {
+    res.json(election);
+  } else {
+    res.status(404);
+    throw new Error("Product Not Found");
+  }
 });
 
 module.exports = {
-  getElectionResult,
+  getElectionById,
   getElections,
 };

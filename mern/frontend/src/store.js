@@ -9,7 +9,7 @@ import {
 } from "./reducers/userReducers";
 import {
   electionDetailsReducer,
-  electionListsReducer,
+  electionListReducer,
 } from "./reducers/electionReducers";
 import { walletDetailsReducer } from "./reducers/walletReducers";
 
@@ -19,7 +19,7 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateProfileReducer,
   electionDetails: electionDetailsReducer,
-  electionList: electionListsReducer,
+  electionList: electionListReducer,
   walletDetails: walletDetailsReducer,
 });
 

@@ -8,39 +8,6 @@ import {
   ELECTION_LIST_FAIL,
 } from "../constants/electionConstants";
 
-export const getElectionDetails = (id) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: ELECTION_DETAILS_REQUEST,
-    });
-
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const { data } = await axios.get(`/api/elections/result/${id}`, config);
-
-    dispatch({
-      type: ELECTION_DETAILS_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: ELECTION_DETAILS_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
-
 export const listElections =
   (keyword = "") =>
   async (dispatch, getState) => {
@@ -78,3 +45,36 @@ export const listElections =
       });
     }
   };
+
+export const listElectionDetails = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ELECTION_DETAILS_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`/api/elections/${id}`, config);
+
+    dispatch({
+      type: ELECTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
