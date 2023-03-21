@@ -8,7 +8,7 @@
   ],
   "routes": [
     {
-      "src": "mern/(.*)",
+      "src": "/(.*)",
       "dest": "mern/server.js"
     }
   ]
