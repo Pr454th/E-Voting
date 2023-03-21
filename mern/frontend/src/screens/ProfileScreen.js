@@ -5,9 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Meta from "../components/Meta";
-import myContract from "../contracts/myContract.json";
 import { getUserDetails, updateUserProfile } from "../actions/userActions";
-import { storeWalletDetails } from "../actions/walletActions";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");

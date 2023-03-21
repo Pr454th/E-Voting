@@ -15,9 +15,6 @@ const ElectionScreen = () => {
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
 
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
   useEffect(() => {
     dispatch(listElectionDetails(id));
   }, [dispatch, id]);
@@ -25,8 +22,6 @@ const ElectionScreen = () => {
   const resultHandler = () => {
     navigate(`/result/${id}`);
   };
-
-  const voteHandler = () => {};
 
   return (
     <div>
