@@ -2,17 +2,19 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { listElectionDetails } from "../actions/electionActions";
+import { Tabs, Tab } from "react-bootstrap";
 
 import {
   Chart as ChartJS,
   CategoryScale,
+  ArcElement,
   LinearScale,
   BarElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Meta from "../components/Meta";
@@ -20,6 +22,7 @@ import Meta from "../components/Meta";
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  ArcElement,
   BarElement,
   Title,
   Tooltip,
@@ -33,7 +36,7 @@ const options = {
       position: "top",
     },
     title: {
-      display: true,
+      display: false,
       text: "Election Result",
     },
   },
@@ -53,6 +56,40 @@ const options = {
       title: {
         display: true,
         text: "Votes",
+      },
+    },
+  },
+};
+
+const optionsForPie = {
+  maintainAspectRatio: true,
+  responsive: true,
+  width: "400",
+  height: "400",
+  plugins: {
+    legend: {
+      position: "left",
+      labels: {
+        font: {
+          size: 20,
+        },
+      },
+      title: {
+        display: true,
+        padding: {
+          right: 30,
+        },
+      },
+    },
+    title: {
+      align: "start",
+      display: false,
+      text: "Election Result",
+      padding: {
+        bottom: 0,
+      },
+      font: {
+        size: 30,
       },
     },
   },
@@ -131,7 +168,22 @@ export default function ResultScreen() {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          <Bar options={options} data={data} />
+          <Tabs
+            defaultActiveKey="bar"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
+            <Tab eventKey="bar" title="Bar">
+              <Bar options={options} data={data} />
+            </Tab>
+            <Tab eventKey="pie" title="Pie">
+              <center>
+                <div style={{ width: "70%", height: "70%" }}>
+                  <Pie data={data} options={optionsForPie} />
+                </div>
+              </center>
+            </Tab>
+          </Tabs>
         </>
       )}
       ;
