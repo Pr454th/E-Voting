@@ -10,8 +10,7 @@ export const storeWalletDetails = (add, bal) => async (dispatch) => {
       type: WALLET_DETAILS_REQUEST,
     });
 
-    const { data } = { isConnected: true, address: add, balance: bal };
-
+    const data = { isConnected: true, address: add, balance: bal };
     dispatch({
       type: WALLET_DETAILS_SUCCESS,
       payload: data,

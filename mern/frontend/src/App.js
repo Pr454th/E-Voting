@@ -22,6 +22,11 @@ function App() {
             <Route element={<LoginScreen />} path="/login"></Route>
             <Route element={<RegisterScreen />} path="/register"></Route>
             <Route element={<DashboardScreen />} path="/dashboard"></Route>
+            <Route
+              path="/search/:keyword"
+              element={<DashboardScreen />}
+              exact
+            ></Route>{" "}
             <Route element={<ProfileScreen />} path="/profile"></Route>
             <Route element={<ElectionScreen />} path="/elections/:id"></Route>
             <Route element={<ResultScreen />} path="/result/:id"></Route>

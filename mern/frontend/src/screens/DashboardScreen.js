@@ -22,7 +22,7 @@ const DashboardScreen = () => {
   return (
     <div>
       <Meta />
-      <Link to="/" className="btn btn-light">
+      <Link to="/dashboard" className="btn btn-light">
         Go Back
       </Link>
 

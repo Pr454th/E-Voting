@@ -35,7 +35,9 @@ function Header() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
           <Navbar.Collapse id="basic-navbar-nav">
-            {link?.includes("dashboard") && <SearchBox />}
+            {(link?.includes("dashboard") || link?.includes("search")) && (
+              <SearchBox />
+            )}
 
             <Nav className="me-auto" />
             {userInfo?._id ? (

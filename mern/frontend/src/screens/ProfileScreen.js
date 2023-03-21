@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import Web3 from "web3";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Meta from "../components/Meta";
+import myContract from "../contracts/myContract.json";
 import { getUserDetails, updateUserProfile } from "../actions/userActions";
-
+import { storeWalletDetails } from "../actions/walletActions";
 const ProfileScreen = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,6 +16,8 @@ const ProfileScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setmessage] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [contract, setContract] = useState({});
 
   const history = useNavigate();
   const dispatch = useDispatch();
@@ -26,6 +30,9 @@ const ProfileScreen = () => {
 
   const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
   const { success } = userUpdateProfile;
+
+  const walletDetails = useSelector((state) => state.walletDetails);
+  const { wallet } = walletDetails;
 
   useEffect(() => {
     if (userInfo?._id) {
@@ -57,6 +64,32 @@ const ProfileScreen = () => {
       );
     }
   };
+
+  const walletConnectHandler = async () => {
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      const accounts = await window.ethereum.request({
+        method: "eth_accounts",
+      });
+      setAccounts(accounts[0]);
+      let web3;
+      if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+      } else if (window.web3) {
+        web3 = new Web3(window.web3.currentProvider);
+      } else {
+        console.error("No Ethereum provider detected");
+      }
+      const contractABI = myContract.abi;
+      const contractAddress = "0x7f3CDd783BAb85840753Fd25B08422F5e92a3eF1";
+      let contract = new web3.eth.Contract(contractABI, contractAddress);
+      setContract(contract);
+      dispatch(storeWalletDetails(accounts[0], "100"));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Row>
       <Meta title="Profile | E-Voting" />
@@ -126,6 +159,17 @@ const ProfileScreen = () => {
             Update
           </Button>
         </Form>
+      </Col>
+      <Col md={9}>
+        <h2>Wallet Details</h2>
+        <Button
+          className="my-3"
+          variant="primary"
+          onClick={walletConnectHandler}
+        >
+          {wallet?.isConnected ? "Wallet Connected" : "Connect Wallet"}
+        </Button>
+        {wallet?.isConnected && <h5>Wallet Address: {wallet.address}</h5>}
       </Col>
     </Row>
   );
