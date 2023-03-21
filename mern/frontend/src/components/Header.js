@@ -20,10 +20,6 @@ function Header() {
     dispatch(logout());
   };
 
-  const walletHandler = () => {
-    console.log(location);
-  };
-
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
