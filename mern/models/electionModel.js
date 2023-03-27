@@ -32,15 +32,21 @@ const electionSchema = mongoose.Schema(
         },
       },
     ],
+    isStarted: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    startedAt: {
+      type: Date,
+    },
     isFinished: {
       type: Boolean,
       required: true,
       default: false,
     },
-    winner: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: false,
-      ref: "User",
+    finishedAt: {
+      type: Date,
     },
   },
   {

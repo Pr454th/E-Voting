@@ -6,10 +6,15 @@ import {
   userRegisterReducer,
   userDetailsReducer,
   userUpdateProfileReducer,
+  userListReducer,
+  userDeleteReducer,
+  userUpdateReducer,
 } from "./reducers/userReducers";
 import {
   electionDetailsReducer,
   electionListReducer,
+  electionDeleteReducer,
+  electionUpdateReducer,
 } from "./reducers/electionReducers";
 import { walletDetailsReducer } from "./reducers/walletReducers";
 
@@ -18,8 +23,13 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   userDetails: userDetailsReducer,
   userUpdateProfile: userUpdateProfileReducer,
+  userList: userListReducer,
+  userDelete: userDeleteReducer,
+  userUpdate: userUpdateReducer,
   electionDetails: electionDetailsReducer,
   electionList: electionListReducer,
+  electionDelete: electionDeleteReducer,
+  electionUpdate: electionUpdateReducer,
   walletDetails: walletDetailsReducer,
 });
 

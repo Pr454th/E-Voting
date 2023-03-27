@@ -10,6 +10,9 @@ import DashboardScreen from "./screens/DashboardScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ResultScreen from "./screens/ResultScreen";
 import ElectionScreen from "./screens/ElectionScreen";
+import UserListScreen from "./screens/UserListScreen";
+import UserEditScreen from "./screens/UserEditScreen";
+import ElectionListScreen from "./screens/ElectionListScreen";
 
 function App() {
   return (
@@ -30,6 +33,15 @@ function App() {
             <Route element={<ProfileScreen />} path="/profile"></Route>
             <Route element={<ElectionScreen />} path="/elections/:id"></Route>
             <Route element={<ResultScreen />} path="/result/:id"></Route>
+            <Route element={<UserListScreen />} path="/admin/userlist"></Route>
+            <Route
+              element={<ElectionListScreen />}
+              path="/admin/electionlist"
+            ></Route>
+            <Route
+              element={<UserEditScreen />}
+              path="/admin/user/:id/edit"
+            ></Route>
           </Routes>
         </Container>
       </main>

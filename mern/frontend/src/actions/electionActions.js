@@ -6,6 +6,13 @@ import {
   ELECTION_LIST_REQUEST,
   ELECTION_LIST_SUCCESS,
   ELECTION_LIST_FAIL,
+  ELECTION_DELETE_FAIL,
+  ELECTION_DELETE_REQUEST,
+  ELECTION_DELETE_SUCCESS,
+  ELECTION_UPDATE_FAIL,
+  ELECTION_UPDATE_REQUEST,
+  ELECTION_UPDATE_SUCCESS,
+  ELECTION_UPDATE_RESET,
 } from "../constants/electionConstants";
 
 export const listElections =
@@ -71,6 +78,80 @@ export const listElectionDetails = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ELECTION_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const deleteElection = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ELECTION_DELETE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    await axios.delete(`/api/elections/${id}`, config);
+
+    dispatch({
+      type: ELECTION_DELETE_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_DELETE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateElection = (election) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ELECTION_UPDATE_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/elections/${election._id}`,
+      election,
+      config
+    );
+
+    dispatch({
+      type: ELECTION_UPDATE_SUCCESS,
+    });
+
+    dispatch({
+      type: ELECTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_UPDATE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

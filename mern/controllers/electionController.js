@@ -21,7 +21,7 @@ const getElectionById = asyncHandler(async (req, res) => {
     res.json(election);
   } else {
     res.status(404);
-    throw new Error("Product Not Found");
+    throw new Error("Election Not Found");
   }
 });
 
