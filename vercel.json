@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "mern/server.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "mern/server.js"
+      "dest": "server.js"
     }
   ]
 }

@@ -5,10 +5,13 @@ import "./bootstrap.min.css";
 import "./index.css";
 import App from "./App";
 import store from "./store";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <ThirdwebProvider activeChain="mumbai">
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </ThirdwebProvider>
 );

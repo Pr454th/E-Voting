@@ -76,24 +76,19 @@ const ElectionScreen = () => {
                   <h3>Candidate Details</h3>
                   <ListGroup.Item>
                     <Row>
-                      <Col md={2}>
+                      <Col md={3}>
                         <h5>
                           <strong>Name</strong>
                         </h5>
                       </Col>
-                      <Col md={2}>
+                      <Col md={3}>
                         <h5>
                           <strong>Gender</strong>
                         </h5>
                       </Col>
-                      <Col md={3}>
-                        <h5>
-                          <strong>Description</strong>
-                        </h5>
-                      </Col>
                       <Col md={5}>
                         <h5>
-                          <strong>View Profile</strong>
+                          <strong>Description</strong>
                         </h5>
                       </Col>
                     </Row>
@@ -101,22 +96,14 @@ const ElectionScreen = () => {
                   {election.candidates?.map((candidate) => (
                     <ListGroup.Item key={candidate._id}>
                       <Row>
-                        <Col md={2}>
+                        <Col md={3}>
                           <strong>{candidate.name}</strong>
                         </Col>
-                        <Col md={2}>
+                        <Col md={3}>
                           <strong>{candidate.gender}</strong>
                         </Col>
-                        <Col md={3}>
-                          <strong>{candidate.description}</strong>
-                        </Col>
                         <Col md={5}>
-                          <Button
-                            variant="primary"
-                            onClick={() => navigate(`/users/${candidate._id}`)}
-                          >
-                            View Candidate
-                          </Button>
+                          <strong>{candidate.description}</strong>
                         </Col>
                       </Row>
                     </ListGroup.Item>

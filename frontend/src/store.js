@@ -17,6 +17,7 @@ import {
   electionUpdateReducer,
 } from "./reducers/electionReducers";
 import { walletDetailsReducer } from "./reducers/walletReducers";
+import { contractDetailsReducer } from "./reducers/contractReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -31,6 +32,7 @@ const reducer = combineReducers({
   electionDelete: electionDeleteReducer,
   electionUpdate: electionUpdateReducer,
   walletDetails: walletDetailsReducer,
+  contractDetails: contractDetailsReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
