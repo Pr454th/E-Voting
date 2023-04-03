@@ -6,6 +6,10 @@ import {
   ELECTION_LIST_REQUEST,
   ELECTION_LIST_SUCCESS,
   ELECTION_LIST_FAIL,
+  ELECTION_CREATE_REQUEST,
+  ELECTION_CREATE_SUCCESS,
+  ELECTION_CREATE_FAIL,
+  ELECTION_CREATE_RESET,
   ELECTION_DELETE_REQUEST,
   ELECTION_DELETE_SUCCESS,
   ELECTION_DELETE_FAIL,
@@ -38,6 +42,21 @@ export const electionDetailsReducer = (state = { election: {} }, action) => {
       return { loading: false, error: action.payload };
     case ELECTION_DETAILS_RESET:
       return { election: {} };
+    default:
+      return state;
+  }
+};
+
+export const electionCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ELECTION_CREATE_REQUEST:
+      return { loading: true };
+    case ELECTION_CREATE_SUCCESS:
+      return { loading: false, success: true, election: action.payload };
+    case ELECTION_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+    case ELECTION_CREATE_RESET:
+      return {};
     default:
       return state;
   }

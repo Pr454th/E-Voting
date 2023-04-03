@@ -6,6 +6,10 @@ import {
   ELECTION_LIST_REQUEST,
   ELECTION_LIST_SUCCESS,
   ELECTION_LIST_FAIL,
+  ELECTION_CREATE_REQUEST,
+  ELECTION_CREATE_SUCCESS,
+  ELECTION_CREATE_FAIL,
+  ELECTION_CREATE_RESET,
   ELECTION_DELETE_FAIL,
   ELECTION_DELETE_REQUEST,
   ELECTION_DELETE_SUCCESS,
@@ -85,6 +89,44 @@ export const listElectionDetails = (id) => async (dispatch, getState) => {
     });
   }
 };
+
+export const createElection =
+  (name, description) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ELECTION_CREATE_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/api/elections`,
+        { name, description },
+        config
+      );
+
+      dispatch({
+        type: ELECTION_CREATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ELECTION_CREATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 
 export const deleteElection = (id) => async (dispatch, getState) => {
   try {

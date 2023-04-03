@@ -13,6 +13,7 @@ import {
 import {
   electionDetailsReducer,
   electionListReducer,
+  electionCreateReducer,
   electionDeleteReducer,
   electionUpdateReducer,
 } from "./reducers/electionReducers";
@@ -29,6 +30,7 @@ const reducer = combineReducers({
   userUpdate: userUpdateReducer,
   electionDetails: electionDetailsReducer,
   electionList: electionListReducer,
+  electionCreate: electionCreateReducer,
   electionDelete: electionDeleteReducer,
   electionUpdate: electionUpdateReducer,
   walletDetails: walletDetailsReducer,

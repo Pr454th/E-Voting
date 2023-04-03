@@ -13,6 +13,8 @@ import ElectionScreen from "./screens/ElectionScreen";
 import UserListScreen from "./screens/UserListScreen";
 import UserEditScreen from "./screens/UserEditScreen";
 import ElectionListScreen from "./screens/ElectionListScreen";
+import ElectionCreateScreen from "./screens/ElectionCreateScreen";
+import ElectionEditScreen from "./screens/ElectionEditScreen";
 
 function App() {
   return (
@@ -41,6 +43,14 @@ function App() {
             <Route
               element={<UserEditScreen />}
               path="/admin/user/:id/edit"
+            ></Route>
+            <Route
+              element={<ElectionCreateScreen />}
+              path="/admin/createelection"
+            ></Route>
+            <Route
+              element={<ElectionEditScreen />}
+              path="/admin/election/:id/edit"
             ></Route>
           </Routes>
         </Container>

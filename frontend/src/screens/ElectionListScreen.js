@@ -59,21 +59,18 @@ const ElectionListScreen = () => {
           <Table striped bordered hover responsive className="table-sm">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>DATE</th>
                 <th>NAME</th>
                 <th>DESCRIPTION</th>
                 <th>ELECTION STATUS</th>
-                <th>STARTED AT</th>
-                <th>FINISHED AT</th>
+                <th>STARTED ON</th>
+                <th>ENDED ON</th>
+                <th>MODIFY</th>
+                <th>VIEW</th>
               </tr>
             </thead>
             <tbody>
               {elections.map((election) => (
                 <tr key={election._id}>
-                  <td>{election._id}</td>
-                  <td>{election.createdAt.substring(0, 10)}</td>
-
                   <td>{election.name}</td>
                   <td>{election.description}</td>
                   <td>
@@ -96,6 +93,20 @@ const ElectionListScreen = () => {
                     ) : (
                       <i className="fas fa-times" style={{ color: "red" }}></i>
                     )}
+                  </td>
+                  <td>
+                    <LinkContainer to={`/admin/election/${election._id}/edit`}>
+                      <Button variant="light" className="btn-sm">
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    </LinkContainer>
+                    <Button
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => deleteHandle(election._id)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </Button>
                   </td>
                   <td>
                     <LinkContainer to={`/elections/${election._id}`}>
