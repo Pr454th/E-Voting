@@ -19,7 +19,7 @@ function Header() {
 
   const logoutHandler = () => {
     logout();
-    //dispatch(logOut());
+    dispatch(logOut());
   };
 
   return (
@@ -46,7 +46,7 @@ function Header() {
                 <LinkContainer to="/profile">
                   <Nav.Link>Profile</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/dashboard">
+                <LinkContainer to="/login">
                   <Nav.Link onClick={logoutHandler}>Logout</Nav.Link>
                 </LinkContainer>
               </Nav>
