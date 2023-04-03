@@ -11,7 +11,7 @@ export const getContract = () => async (dispatch) => {
 
     const sdk = new ThirdwebSDK("mumbai");
     const contract = await sdk.getContract(
-      "0xf61eE0665Ee019a96a04DD34B998356377683aF6"
+      "0xDf978f7DC8778e958c25a526d96323A09b3e6dDE"
     );
 
     dispatch({
