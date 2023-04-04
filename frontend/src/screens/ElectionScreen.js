@@ -129,41 +129,43 @@ const ElectionScreen = () => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h3>Candidate Details</h3>
-                  <FormContainer>
-                    <h1>Add New Candiate</h1>
-                    {loadingAddCandidate && <Loader />}
-                    {errorAddCandidate && (
-                      <Message variant="danger">{errorAddCandidate}</Message>
-                    )}
+                  {!election.isStarted && user.isAdmin && (
+                    <FormContainer>
+                      <h1>Add New Candiate</h1>
+                      {loadingAddCandidate && <Loader />}
+                      {errorAddCandidate && (
+                        <Message variant="danger">{errorAddCandidate}</Message>
+                      )}
 
-                    <Form>
-                      <Form.Group controlId="email">
-                        <Form.Label>Email Address</Form.Label>
-                        <Form.Control
-                          type="email"
-                          placeholder="Email Address"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        ></Form.Control>
-                      </Form.Group>
-                      <Form.Group controlId="address">
-                        <Form.Label>Crypto Address</Form.Label>
-                        <Form.Control
-                          type="address"
-                          placeholder="Crypto Address"
-                          value={address}
-                          onChange={(e) => setAddress(e.target.value)}
-                        ></Form.Control>
-                      </Form.Group>
-                      <Button
-                        variant="primary"
-                        className="my-3"
-                        onClick={() => addCandidateHandler()}
-                      >
-                        ADD CANDIDATE
-                      </Button>
-                    </Form>
-                  </FormContainer>
+                      <Form>
+                        <Form.Group controlId="email">
+                          <Form.Label>Email Address</Form.Label>
+                          <Form.Control
+                            type="email"
+                            placeholder="Email Address"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          ></Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="address">
+                          <Form.Label>Crypto Address</Form.Label>
+                          <Form.Control
+                            type="address"
+                            placeholder="Crypto Address"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                          ></Form.Control>
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          className="my-3"
+                          onClick={() => addCandidateHandler()}
+                        >
+                          ADD CANDIDATE
+                        </Button>
+                      </Form>
+                    </FormContainer>
+                  )}
 
                   <ListGroup.Item>
                     <Row>
@@ -182,11 +184,13 @@ const ElectionScreen = () => {
                           <strong>Address</strong>
                         </h5>
                       </Col>
-                      <Col md={3}>
-                        <h5>
-                          <strong>Modify</strong>
-                        </h5>
-                      </Col>
+                      {user.isAdmin && !election.isStarted && (
+                        <Col md={3}>
+                          <h5>
+                            <strong>Modify</strong>
+                          </h5>
+                        </Col>
+                      )}
                     </Row>
                   </ListGroup.Item>
                   {election.candidates?.map((candidate) => (
@@ -201,30 +205,32 @@ const ElectionScreen = () => {
                         <Col md={3}>
                           <strong>{candidate.address}</strong>
                         </Col>
-                        <Col md={3}>
-                          <Button
-                            variant="flush"
-                            className="btn-sm"
-                            onClick={() =>
-                              editCandidateHandler(
-                                candidate.address,
-                                candidate.email
-                              )
-                            }
-                          >
-                            <i className="fas fa-edit"></i>
-                          </Button>
+                        {user.isAdmin && !election.isStarted && (
+                          <Col md={3}>
+                            <Button
+                              variant="flush"
+                              className="btn-sm"
+                              onClick={() =>
+                                editCandidateHandler(
+                                  candidate.address,
+                                  candidate.email
+                                )
+                              }
+                            >
+                              <i className="fas fa-edit"></i>
+                            </Button>
 
-                          <Button
-                            variant="danger"
-                            className="btn-sm"
-                            onClick={() =>
-                              deleteCandidateHandler(candidate.address)
-                            }
-                          >
-                            <i className="fas fa-trash"></i>
-                          </Button>
-                        </Col>
+                            <Button
+                              variant="danger"
+                              className="btn-sm"
+                              onClick={() =>
+                                deleteCandidateHandler(candidate.address)
+                              }
+                            >
+                              <i className="fas fa-trash"></i>
+                            </Button>
+                          </Col>
+                        )}
                       </Row>
                     </ListGroup.Item>
                   ))}
