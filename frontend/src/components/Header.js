@@ -3,14 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
-import { useLogout } from "@thirdweb-dev/react";
 import SearchBox from "./SearchBox";
 import { logOut } from "../actions/userActions";
 
 function Header() {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { logout, isLoading } = useLogout();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -18,7 +16,6 @@ function Header() {
   const link = location.pathname.split("/")[1];
 
   const logoutHandler = () => {
-    logout();
     dispatch(logOut());
   };
 
