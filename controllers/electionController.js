@@ -93,7 +93,6 @@ const addCandidate = asyncHandler(async (req, res) => {
         email: req.body.email,
         address: req.body.address,
       };
-      console.log(candidate);
       election.candidates.push(candidate);
       const updatedElection = await election.save();
 
@@ -112,7 +111,6 @@ const deleteCandidate = asyncHandler(async (req, res) => {
   const election = await Election.findById(req.params.id);
 
   if (election) {
-    console.log("W");
     election.candidates = election.candidates.filter(
       (x) => x.address !== req.body.address
     );
