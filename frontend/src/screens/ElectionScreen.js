@@ -10,6 +10,8 @@ import {
   listElectionDetails,
   addCandidateToElection,
   deleteCandidateFromElection,
+  startElection,
+  finishElection,
 } from "../actions/electionActions";
 import { ELECTION_ADD_CANDIDATE_RESET } from "../constants/electionConstants";
 
@@ -31,42 +33,24 @@ const ElectionScreen = () => {
     (state) => state.electionAddCandidate
   );
 
-  const electionDeleteCandidate = useSelector(
-    (state) => state.electionDeleteCandidate
-  );
-  const {
-    loading: loadingDeleteCandidate,
-    error: errorDeleteCandidate,
-    success: successDeleteCandidate,
-  } = electionDeleteCandidate;
-
-  const {
-    loading: loadingAddCandidate,
-    error: errorAddCandidate,
-    success: successAddCandidate,
-  } = electionAddCandidate;
+  const { error: errorAddCandidate } = electionAddCandidate;
 
   useEffect(() => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
     dispatch(listElectionDetails(id));
   }, [dispatch, id]);
 
-  useEffect(() => {
-    if (successAddCandidate) {
-      dispatch(listElectionDetails(id));
-    }
-    if (successDeleteCandidate) {
-      dispatch(listElectionDetails(id));
-    }
-  }, [dispatch, successAddCandidate]);
-
   const resultHandler = () => {
     navigate(`/result/${id}`);
   };
 
-  const finishHandler = () => {};
+  const finishHandler = () => {
+    dispatch(finishElection(election._id));
+  };
 
-  const startHandler = () => {};
+  const startHandler = () => {
+    dispatch(startElection(election._id));
+  };
 
   const voteHandler = () => {};
 
@@ -132,7 +116,6 @@ const ElectionScreen = () => {
                   {!election.isStarted && user.isAdmin && (
                     <FormContainer>
                       <h1>Add New Candiate</h1>
-                      {loadingAddCandidate && <Loader />}
                       {errorAddCandidate && (
                         <Message variant="danger">{errorAddCandidate}</Message>
                       )}

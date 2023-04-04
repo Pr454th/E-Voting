@@ -7,6 +7,8 @@ const {
   updateElectionById,
   addCandidate,
   deleteCandidate,
+  startElectionById,
+  finishElectionById,
 } = require("../controllers/electionController");
 const { protect, admin } = require("../middleware/authMiddleWare");
 
@@ -24,6 +26,11 @@ router
   .put(protect, admin, updateElectionById);
 
 router.route("/addcandidate/:id").put(protect, admin, addCandidate);
+
 router.route("/deletecandidate/:id").put(protect, admin, deleteCandidate);
+
+router.route("/start/:id").put(protect, admin, startElectionById);
+
+router.route("/finish/:id").put(protect, admin, finishElectionById);
 
 module.exports = router;

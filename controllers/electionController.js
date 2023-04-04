@@ -122,6 +122,54 @@ const deleteCandidate = asyncHandler(async (req, res) => {
   }
 });
 
+const startElectionById = asyncHandler(async (req, res) => {
+  const election = await Election.findById(req.params.id);
+
+  if (election) {
+    if (election.isStarted) {
+      res.status(400);
+      throw new Error("Election Already Started");
+    }
+
+    if (election.candidates.length < 2) {
+      res.status(400);
+      throw new Error("Election Must Have At Least 2 Candidates");
+    }
+
+    election.isStarted = true;
+    election.startedAt = Date.now();
+    const updatedElection = await election.save();
+    res.json(updatedElection);
+  } else {
+    res.status(404);
+    throw new Error("Election Not Found");
+  }
+});
+
+const finishElectionById = asyncHandler(async (req, res) => {
+  const election = await Election.findById(req.params.id);
+
+  if (election) {
+    if (election.isFinished) {
+      res.status(400);
+      throw new Error("Election Already Finished");
+    }
+
+    if (!election.isStarted) {
+      res.status(400);
+      throw new Error("Election Not Started Yet");
+    }
+
+    election.isFinished = true;
+    election.finishedAt = Date.now();
+    const updatedElection = await election.save();
+    res.json(updatedElection);
+  } else {
+    res.status(404);
+    throw new Error("Election Not Found");
+  }
+});
+
 module.exports = {
   getElectionById,
   getElections,
@@ -130,4 +178,6 @@ module.exports = {
   updateElectionById,
   addCandidate,
   deleteCandidate,
+  startElectionById,
+  finishElectionById,
 };

@@ -21,6 +21,12 @@ import {
   ELECTION_DELETE_CANDIDATE_REQUEST,
   ELECTION_DELETE_CANDIDATE_SUCCESS,
   ELECTION_DELETE_CANDIDATE_FAIL,
+  ELECTION_START_REQUEST,
+  ELECTION_START_SUCCESS,
+  ELECTION_START_FAIL,
+  ELECTION_FINISH_REQUEST,
+  ELECTION_FINISH_SUCCESS,
+  ELECTION_FINISH_FAIL,
 } from "../constants/electionConstants";
 
 export const listElections =
@@ -291,3 +297,79 @@ export const deleteCandidateFromElection =
       });
     }
   };
+
+export const startElection = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ELECTION_START_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(`/api/elections/start/${id}`, {}, config);
+
+    dispatch({
+      type: ELECTION_START_SUCCESS,
+    });
+
+    dispatch({
+      type: ELECTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_START_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const finishElection = (id) => async (dispatch, getState) => {
+  try {
+    dispatch({
+      type: ELECTION_FINISH_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(`/api/elections/finish/${id}`, {}, config);
+
+    dispatch({
+      type: ELECTION_FINISH_SUCCESS,
+    });
+
+    dispatch({
+      type: ELECTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_FINISH_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
