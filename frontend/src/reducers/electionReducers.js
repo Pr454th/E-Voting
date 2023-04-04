@@ -21,6 +21,10 @@ import {
   ELECTION_ADD_CANDIDATE_SUCCESS,
   ELECTION_ADD_CANDIDATE_FAIL,
   ELECTION_ADD_CANDIDATE_RESET,
+  ELECTION_DELETE_CANDIDATE_REQUEST,
+  ELECTION_DELETE_CANDIDATE_SUCCESS,
+  ELECTION_DELETE_CANDIDATE_FAIL,
+  ELECTION_DELETE_CANDIDATE_RESET,
 } from "../constants/electionConstants";
 
 export const electionListReducer = (state = { elections: [] }, action) => {
@@ -103,6 +107,21 @@ export const electionAddCandidateReducer = (state = {}, action) => {
     case ELECTION_ADD_CANDIDATE_FAIL:
       return { loading: false, error: action.payload };
     case ELECTION_ADD_CANDIDATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const electionDeleteCandidateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ELECTION_DELETE_CANDIDATE_REQUEST:
+      return { loading: true };
+    case ELECTION_DELETE_CANDIDATE_SUCCESS:
+      return { loading: false, success: true };
+    case ELECTION_DELETE_CANDIDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case ELECTION_DELETE_CANDIDATE_RESET:
       return {};
     default:
       return state;

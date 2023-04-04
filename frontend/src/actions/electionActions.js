@@ -18,6 +18,9 @@ import {
   ELECTION_ADD_CANDIDATE_REQUEST,
   ELECTION_ADD_CANDIDATE_SUCCESS,
   ELECTION_ADD_CANDIDATE_FAIL,
+  ELECTION_DELETE_CANDIDATE_REQUEST,
+  ELECTION_DELETE_CANDIDATE_SUCCESS,
+  ELECTION_DELETE_CANDIDATE_FAIL,
 } from "../constants/electionConstants";
 
 export const listElections =
@@ -204,7 +207,7 @@ export const updateElection = (election) => async (dispatch, getState) => {
 };
 
 export const addCandidateToElection =
-  (id, email, description, address) => async (dispatch, getState) => {
+  (id, email, address) => async (dispatch, getState) => {
     try {
       dispatch({
         type: ELECTION_ADD_CANDIDATE_REQUEST,
@@ -223,7 +226,7 @@ export const addCandidateToElection =
 
       const { data } = await axios.put(
         `/api/elections/addcandidate/${id}`,
-        { id, email, description, address },
+        { id, email, address },
         config
       );
 
@@ -238,6 +241,49 @@ export const addCandidateToElection =
     } catch (error) {
       dispatch({
         type: ELECTION_ADD_CANDIDATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
+export const deleteCandidateFromElection =
+  (address, _id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ELECTION_DELETE_CANDIDATE_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/elections/deletecandidate/${_id}`,
+        { address },
+        config
+      );
+
+      dispatch({
+        type: ELECTION_DELETE_CANDIDATE_SUCCESS,
+      });
+
+      dispatch({
+        type: ELECTION_DETAILS_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ELECTION_DELETE_CANDIDATE_FAIL,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message

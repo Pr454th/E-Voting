@@ -9,6 +9,7 @@ import Meta from "../components/Meta";
 import {
   listElectionDetails,
   addCandidateToElection,
+  deleteCandidateFromElection,
 } from "../actions/electionActions";
 import { ELECTION_ADD_CANDIDATE_RESET } from "../constants/electionConstants";
 
@@ -29,6 +30,16 @@ const ElectionScreen = () => {
   const electionAddCandidate = useSelector(
     (state) => state.electionAddCandidate
   );
+
+  const electionDeleteCandidate = useSelector(
+    (state) => state.electionDeleteCandidate
+  );
+  const {
+    loading: loadingDeleteCandidate,
+    error: errorDeleteCandidate,
+    success: successDeleteCandidate,
+  } = electionDeleteCandidate;
+
   const {
     loading: loadingAddCandidate,
     error: errorAddCandidate,
@@ -42,6 +53,9 @@ const ElectionScreen = () => {
 
   useEffect(() => {
     if (successAddCandidate) {
+      dispatch(listElectionDetails(id));
+    }
+    if (successDeleteCandidate) {
       dispatch(listElectionDetails(id));
     }
   }, [dispatch, successAddCandidate]);
@@ -58,11 +72,19 @@ const ElectionScreen = () => {
 
   const addCandidateHandler = () => {
     dispatch(addCandidateToElection(election._id, email, address));
+    setEmail("");
+    setAddress("");
   };
 
-  const editCandidateHandler = () => {};
+  const editCandidateHandler = (candidateAddress, candidateEmail) => {
+    setEmail(candidateEmail);
+    setAddress(candidateAddress);
+    dispatch(deleteCandidateFromElection(candidateAddress, election._id));
+  };
 
-  const deleteCandidateHandler = () => {};
+  const deleteCandidateHandler = (candidateAddress) => {
+    dispatch(deleteCandidateFromElection(candidateAddress, election._id));
+  };
 
   return (
     <div>
@@ -150,7 +172,7 @@ const ElectionScreen = () => {
                           <strong>Name</strong>
                         </h5>
                       </Col>
-                      <Col md={2}>
+                      <Col md={3}>
                         <h5>
                           <strong>Gender</strong>
                         </h5>
@@ -160,7 +182,7 @@ const ElectionScreen = () => {
                           <strong>Address</strong>
                         </h5>
                       </Col>
-                      <Col md={2}>
+                      <Col md={3}>
                         <h5>
                           <strong>Modify</strong>
                         </h5>
@@ -173,17 +195,22 @@ const ElectionScreen = () => {
                         <Col md={3}>
                           <strong>{candidate.name}</strong>
                         </Col>
-                        <Col md={2}>
+                        <Col md={3}>
                           <strong>{candidate.gender}</strong>
                         </Col>
                         <Col md={3}>
                           <strong>{candidate.address}</strong>
                         </Col>
-                        <Col md={2}>
+                        <Col md={3}>
                           <Button
                             variant="flush"
                             className="btn-sm"
-                            onClick={() => editCandidateHandler(candidate._id)}
+                            onClick={() =>
+                              editCandidateHandler(
+                                candidate.address,
+                                candidate.email
+                              )
+                            }
                           >
                             <i className="fas fa-edit"></i>
                           </Button>
@@ -192,7 +219,7 @@ const ElectionScreen = () => {
                             variant="danger"
                             className="btn-sm"
                             onClick={() =>
-                              deleteCandidateHandler(candidate._id)
+                              deleteCandidateHandler(candidate.address)
                             }
                           >
                             <i className="fas fa-trash"></i>

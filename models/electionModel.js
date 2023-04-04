@@ -13,8 +13,9 @@ const electionSchema = mongoose.Schema(
     candidates: [
       {
         name: { type: String, required: true },
+        email: { type: String, required: true },
         gender: { type: String, required: true },
-        description: { type: String, required: true },
+        address: { type: String, required: true },
         votes: { type: Number, required: true, default: 0 },
         user: {
           type: mongoose.Schema.Types.ObjectId,
@@ -34,19 +35,21 @@ const electionSchema = mongoose.Schema(
     ],
     isStarted: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     startedAt: {
       type: Date,
+      required: false,
     },
     isFinished: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     finishedAt: {
       type: Date,
+      required: false,
     },
   },
   {

@@ -17,6 +17,7 @@ import {
   electionDeleteReducer,
   electionUpdateReducer,
   electionAddCandidateReducer,
+  electionDeleteCandidateReducer,
 } from "./reducers/electionReducers";
 import { walletDetailsReducer } from "./reducers/walletReducers";
 import { contractDetailsReducer } from "./reducers/contractReducers";
@@ -35,6 +36,7 @@ const reducer = combineReducers({
   electionDelete: electionDeleteReducer,
   electionUpdate: electionUpdateReducer,
   electionAddCandidate: electionAddCandidateReducer,
+  electionDeleteCandidate: electionDeleteCandidateReducer,
   walletDetails: walletDetailsReducer,
   contractDetails: contractDetailsReducer,
 });
