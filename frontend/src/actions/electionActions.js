@@ -9,14 +9,15 @@ import {
   ELECTION_CREATE_REQUEST,
   ELECTION_CREATE_SUCCESS,
   ELECTION_CREATE_FAIL,
-  ELECTION_CREATE_RESET,
   ELECTION_DELETE_FAIL,
   ELECTION_DELETE_REQUEST,
   ELECTION_DELETE_SUCCESS,
   ELECTION_UPDATE_FAIL,
   ELECTION_UPDATE_REQUEST,
   ELECTION_UPDATE_SUCCESS,
-  ELECTION_UPDATE_RESET,
+  ELECTION_ADD_CANDIDATE_REQUEST,
+  ELECTION_ADD_CANDIDATE_SUCCESS,
+  ELECTION_ADD_CANDIDATE_FAIL,
 } from "../constants/electionConstants";
 
 export const listElections =
@@ -201,3 +202,46 @@ export const updateElection = (election) => async (dispatch, getState) => {
     });
   }
 };
+
+export const addCandidateToElection =
+  (id, email, description, address) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ELECTION_ADD_CANDIDATE_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/elections/addcandidate/${id}`,
+        { id, email, description, address },
+        config
+      );
+
+      dispatch({
+        type: ELECTION_ADD_CANDIDATE_SUCCESS,
+      });
+
+      dispatch({
+        type: ELECTION_DETAILS_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ELECTION_ADD_CANDIDATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
