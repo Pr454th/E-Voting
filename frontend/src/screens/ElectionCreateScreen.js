@@ -6,7 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
 import Meta from "../components/Meta";
-import { createElection } from "../actions/electionActions";
+import { addElection } from "../actions/electionActions";
 import { ELECTION_CREATE_RESET } from "../constants/electionConstants";
 
 const ElectionCreateScreen = () => {
@@ -22,19 +22,22 @@ const ElectionCreateScreen = () => {
   const electionCreate = useSelector((state) => state.electionCreate);
   const { loading, error, success } = electionCreate;
 
+  const electionDetails = useSelector((state) => state.electionDetails);
+  const { election } = electionDetails;
+
   useEffect(() => {
     if (!userInfo?.isAdmin) {
       history("/login");
     }
     if (success) {
       dispatch({ type: ELECTION_CREATE_RESET });
-      history("/admin/electionlist");
+      history(`/elections/${election._id}`);
     }
   }, [dispatch, success, userInfo?.isAdmin, history]);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(createElection(name, description));
+    dispatch(addElection(name, description));
   };
 
   return (

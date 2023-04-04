@@ -100,7 +100,7 @@ export const listElectionDetails = (id) => async (dispatch, getState) => {
   }
 };
 
-export const createElection =
+export const addElection =
   (name, description) => async (dispatch, getState) => {
     try {
       dispatch({
@@ -125,6 +125,11 @@ export const createElection =
 
       dispatch({
         type: ELECTION_CREATE_SUCCESS,
+        payload: data,
+      });
+
+      dispatch({
+        type: ELECTION_DETAILS_SUCCESS,
         payload: data,
       });
     } catch (error) {
