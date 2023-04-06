@@ -34,6 +34,12 @@ const ElectionScreen = () => {
   );
 
   const { error: errorAddCandidate } = electionAddCandidate;
+  const { error: errorStartElection } = useSelector(
+    (state) => state.electionStart
+  );
+  const { error: errorFinishElection } = useSelector(
+    (state) => state.electionFinish
+  );
 
   useEffect(() => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
@@ -221,6 +227,14 @@ const ElectionScreen = () => {
               </ListGroup>
             </Col>
             <Col md={4}>
+              {errorStartElection && (
+                <Message variant="danger">{errorStartElection}</Message>
+              )}
+
+              {errorFinishElection && (
+                <Message variant="danger">{errorFinishElection}</Message>
+              )}
+
               <Card>
                 <ListGroup variant="flush">
                   <ListGroup.Item>

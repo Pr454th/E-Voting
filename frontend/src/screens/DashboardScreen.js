@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import Election from "../components/Election";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Meta from "../components/Meta";
 import { listElections } from "../actions/electionActions";
-import { getContract } from "../actions/contractActions";
+
 const DashboardScreen = () => {
   const { keyword } = useParams();
   const dispatch = useDispatch();
