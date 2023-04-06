@@ -70,7 +70,7 @@ const UserEditScreen = () => {
         ) : (
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
+              <Form.Label as="h5">Name</Form.Label>
               <Form.Control
                 type="name"
                 placeholder="Name"
@@ -78,8 +78,9 @@ const UserEditScreen = () => {
                 onChange={(e) => setName(e.target.value)}
               ></Form.Control>
             </Form.Group>
+            <br />
             <Form.Group controlId="email">
-              <Form.Label>Email Address</Form.Label>
+              <Form.Label as="h5">Email Address</Form.Label>
               <Form.Control
                 type="email"
                 placeholder="Email Address"
@@ -87,8 +88,9 @@ const UserEditScreen = () => {
                 onChange={(e) => setEmail(e.target.value)}
               ></Form.Control>
             </Form.Group>
+            <br />
             <Form.Group>
-              <Form.Label as="legend">Select Gender</Form.Label>
+              <Form.Label as="h5">Select Gender</Form.Label>
               <Form.Check
                 type="radio"
                 name="gender"
@@ -106,15 +108,18 @@ const UserEditScreen = () => {
                 onChange={(e) => setGender(e.target.value)}
               ></Form.Check>
             </Form.Group>
+            <br />
             <Form.Group controlId="isadmin">
+              <Form.Label as="h5">Is Admin</Form.Label>
               <Form.Check
                 type="checkbox"
-                label="Is Admin"
+                label="Yes"
                 checked={isAdmin}
                 onChange={(e) => setIsAdmin(e.target.checked)}
               ></Form.Check>
             </Form.Group>
-            <Button type="submit" variant="primary">
+            <br />
+            <Button type="submit" variant="primary" class="my-3">
               Update
             </Button>
           </Form>

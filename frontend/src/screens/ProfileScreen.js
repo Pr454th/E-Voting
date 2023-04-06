@@ -68,8 +68,9 @@ const ProfileScreen = () => {
         {success && <Message variant="success">Profile Updated</Message>}
         {loading && <Loader />}
         <Form onSubmit={submitHandler}>
+          <br />
           <Form.Group controlId="name">
-            <Form.Label>Name</Form.Label>
+            <Form.Label as="h5">Name</Form.Label>
             <Form.Control
               type="name"
               placeholder="Name"
@@ -77,8 +78,9 @@ const ProfileScreen = () => {
               onChange={(e) => setName(e.target.value)}
             ></Form.Control>
           </Form.Group>
+          <br />
           <Form.Group controlId="email">
-            <Form.Label>Email Address</Form.Label>
+            <Form.Label as="h5">Email Address</Form.Label>
             <Form.Control
               type="email"
               placeholder="Email Address"
@@ -86,8 +88,9 @@ const ProfileScreen = () => {
               onChange={(e) => setEmail(e.target.value)}
             ></Form.Control>
           </Form.Group>
+          <br />
           <Form.Group>
-            <Form.Label as="legend">Select Gender</Form.Label>
+            <Form.Label as="h5">Select Gender</Form.Label>
             <Form.Check
               type="radio"
               name="gender"
@@ -105,8 +108,9 @@ const ProfileScreen = () => {
               onChange={(e) => setGender(e.target.value)}
             ></Form.Check>
           </Form.Group>
+          <br />
           <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
+            <Form.Label as="h5">Password</Form.Label>
             <Form.Control
               type="password"
               placeholder="Password"
@@ -114,8 +118,9 @@ const ProfileScreen = () => {
               onChange={(e) => setPassword(e.target.value)}
             ></Form.Control>
           </Form.Group>
+          <br />
           <Form.Group controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
+            <Form.Label as="h5">Confirm Password</Form.Label>
             <Form.Control
               type="password"
               placeholder="Confirm Password"
