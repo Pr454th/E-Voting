@@ -6,6 +6,7 @@ import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Meta from "../components/Meta";
 import { getUserDetails, updateUserProfile } from "../actions/userActions";
+import { USER_UPDATE_PROFILE_RESET } from "../constants/userConstants";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
@@ -43,6 +44,10 @@ const ProfileScreen = () => {
       history("/login");
     }
   }, [dispatch, history, userInfo, user]);
+
+  useEffect(() => {
+    dispatch({ type: USER_UPDATE_PROFILE_RESET });
+  }, [dispatch]);
 
   const submitHandler = (e) => {
     user.name = name;
