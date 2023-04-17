@@ -23,9 +23,7 @@ function Header() {
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <Navbar.Brand>
-            {userInfo?._id ? "Welcome " + userInfo.name : "E-Voting"}
-          </Navbar.Brand>
+          <Navbar.Brand>E-Voting</Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
@@ -41,7 +39,13 @@ function Header() {
                   <Nav.Link>DashBoard</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/profile">
-                  <Nav.Link>Profile</Nav.Link>
+                  <Nav.Link>{userInfo?.name}</Nav.Link>
+                </LinkContainer>
+                <LinkContainer to="/admin/userlist">
+                  <Nav.Link>Users</Nav.Link>
+                </LinkContainer>
+                <LinkContainer to="/admin/electionlist">
+                  <Nav.Link>Elections</Nav.Link>
                 </LinkContainer>
                 <LinkContainer to="/login">
                   <Nav.Link onClick={logoutHandler}>Logout</Nav.Link>
@@ -55,18 +59,6 @@ function Header() {
                     Sign In
                   </Nav.Link>
                 </LinkContainer>
-              </Nav>
-            )}
-            {userInfo?.isAdmin && (
-              <Nav>
-                <NavDropdown title="Admin" id="adminMenu">
-                  <LinkContainer to="/admin/userlist">
-                    <NavDropdown.Item>Users</NavDropdown.Item>
-                  </LinkContainer>
-                  <LinkContainer to="/admin/electionlist">
-                    <NavDropdown.Item>Elections</NavDropdown.Item>
-                  </LinkContainer>
-                </NavDropdown>
               </Nav>
             )}
           </Navbar.Collapse>
