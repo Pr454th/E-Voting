@@ -27,6 +27,12 @@ import {
   ELECTION_FINISH_REQUEST,
   ELECTION_FINISH_SUCCESS,
   ELECTION_FINISH_FAIL,
+  ELECTION_ADD_VOTER_REQUEST,
+  ELECTION_ADD_VOTER_FAIL,
+  ELECTION_ADD_VOTER_SUCCESS,
+  ELECTION_DELETE_VOTER_REQUEST,
+  ELECTION_DELETE_VOTER_SUCCESS,
+  ELECTION_DELETE_VOTER_FAIL,
 } from "../constants/electionConstants";
 
 export const listElections =
@@ -311,6 +317,99 @@ export const deleteCandidateFromElection =
     } catch (error) {
       dispatch({
         type: ELECTION_DELETE_CANDIDATE_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
+
+export const addVoterToElection = (id, email) => async (dispatch, getState) => {
+  try {
+    if (email === "") {
+      dispatch({
+        type: ELECTION_ADD_VOTER_FAIL,
+        payload: "Email is required",
+      });
+      return;
+    }
+
+    dispatch({
+      type: ELECTION_ADD_VOTER_REQUEST,
+    });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/elections/addvoter/${id}`,
+      { id, email },
+      config
+    );
+
+    dispatch({
+      type: ELECTION_ADD_VOTER_SUCCESS,
+    });
+
+    dispatch({
+      type: ELECTION_DETAILS_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ELECTION_ADD_VOTER_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const deleteVoterFromElection =
+  (email, _id) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: ELECTION_DELETE_VOTER_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `/api/elections/deletevoter/${_id}`,
+        { email },
+        config
+      );
+
+      dispatch({
+        type: ELECTION_DELETE_VOTER_SUCCESS,
+      });
+
+      dispatch({
+        type: ELECTION_DETAILS_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: ELECTION_DELETE_VOTER_FAIL,
         payload:
           error.response && error.response.data.message
             ? error.response.data.message

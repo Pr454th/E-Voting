@@ -25,6 +25,14 @@ import {
   ELECTION_DELETE_CANDIDATE_SUCCESS,
   ELECTION_DELETE_CANDIDATE_FAIL,
   ELECTION_DELETE_CANDIDATE_RESET,
+  ELECTION_ADD_VOTER_REQUEST,
+  ELECTION_ADD_VOTER_SUCCESS,
+  ELECTION_ADD_VOTER_FAIL,
+  ELECTION_ADD_VOTER_RESET,
+  ELECTION_DELETE_VOTER_REQUEST,
+  ELECTION_DELETE_VOTER_FAIL,
+  ELECTION_DELETE_VOTER_SUCCESS,
+  ELECTION_DELETE_VOTER_RESET,
   ELECTION_START_REQUEST,
   ELECTION_START_SUCCESS,
   ELECTION_START_FAIL,
@@ -128,6 +136,36 @@ export const electionDeleteCandidateReducer = (state = {}, action) => {
     case ELECTION_DELETE_CANDIDATE_FAIL:
       return { loading: false, error: action.payload };
     case ELECTION_DELETE_CANDIDATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const electionAddVoterReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ELECTION_ADD_VOTER_REQUEST:
+      return { loading: true };
+    case ELECTION_ADD_VOTER_SUCCESS:
+      return { loading: false, success: true };
+    case ELECTION_ADD_VOTER_FAIL:
+      return { loading: false, error: action.payload };
+    case ELECTION_ADD_VOTER_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const electionDeleteVoterReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ELECTION_DELETE_VOTER_REQUEST:
+      return { loading: true };
+    case ELECTION_DELETE_VOTER_SUCCESS:
+      return { loading: false, success: true };
+    case ELECTION_DELETE_VOTER_FAIL:
+      return { loading: false, error: action.payload };
+    case ELECTION_DELETE_VOTER_RESET:
       return {};
     default:
       return state;

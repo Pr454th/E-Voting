@@ -122,6 +122,76 @@ const deleteCandidate = asyncHandler(async (req, res) => {
   }
 });
 
+const addVoter = asyncHandler(async (req, res) => {
+  const election = await Election.findById(req.params.id);
+  election.voters = [];
+  if (req.body.email === "everyone") {
+    const users = await User.find({}).select([
+      "_id",
+      "name",
+      "gender",
+      "email",
+    ]);
+    users.map((User) => {
+      const voter = {
+        name: User.name,
+        email: User.email,
+        gender: User.gender,
+        user: User._id,
+      };
+      election.voters.push(voter);
+    });
+
+    const updatedElection = await election.save();
+
+    res.json(updatedElection);
+  } else {
+    const voterExists = await User.findOne({ email: req.body.email });
+    const emailExists = await election.voters;
+    for (let i = 0; i < emailExists.length; i++) {
+      if (emailExists[i].email === req.body.email) {
+        res.status(400);
+        throw new Error("Voter Already Exists");
+      }
+    }
+
+    if (election) {
+      if (voterExists) {
+        const voter = {
+          name: voterExists.name,
+          gender: voterExists.gender,
+          user: voterExists._id,
+          email: req.body.email,
+        };
+        election.voters.push(voter);
+
+        const updatedElection = await election.save();
+
+        res.json(updatedElection);
+      } else {
+        res.status(404);
+        throw new Error("User Not Found");
+      }
+    } else {
+      res.status(404);
+      throw new Error("Election Not Found");
+    }
+  }
+});
+
+const deleteVoter = asyncHandler(async (req, res) => {
+  const election = await Election.findById(req.params.id);
+
+  if (election) {
+    election.voters = election.voters.filter((x) => x.email !== req.body.email);
+    const updatedElection = await election.save();
+    res.json(updatedElection);
+  } else {
+    res.status(404);
+    throw new Error("Election Not Found");
+  }
+});
+
 const startElectionById = asyncHandler(async (req, res) => {
   const election = await Election.findById(req.params.id);
 
@@ -178,6 +248,8 @@ module.exports = {
   updateElectionById,
   addCandidate,
   deleteCandidate,
+  addVoter,
+  deleteVoter,
   startElectionById,
   finishElectionById,
 };

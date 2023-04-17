@@ -26,6 +26,10 @@ const electionSchema = mongoose.Schema(
     ],
     voters: [
       {
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        gender: { type: String, required: true },
+        isVoted: { type: Boolean, required: true, default: false },
         user: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,

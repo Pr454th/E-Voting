@@ -10,14 +10,21 @@ import {
   listElectionDetails,
   addCandidateToElection,
   deleteCandidateFromElection,
+  addVoterToElection,
+  deleteVoterFromElection,
   startElection,
   finishElection,
 } from "../actions/electionActions";
-import { ELECTION_ADD_CANDIDATE_RESET } from "../constants/electionConstants";
+import {
+  ELECTION_ADD_CANDIDATE_RESET,
+  ELECTION_ADD_VOTER_RESET,
+} from "../constants/electionConstants";
 
 const ElectionScreen = () => {
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [candidateEmail, setCandidateEmail] = useState("");
+  const [candidateAddress, setCandidateAddress] = useState("");
+
+  const [voterEmail, setVoterEmail] = useState("");
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,12 +36,13 @@ const ElectionScreen = () => {
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
 
-  const electionAddCandidate = useSelector(
+  const { error: errorAddCandidate, success: successAddCandidate } =
+    useSelector((state) => state.electionAddCandidate);
+
+  const { error: errorAddVoter, success: successAddVoter } = useSelector(
     (state) => state.electionAddCandidate
   );
 
-  const { error: errorAddCandidate, success: successAddCandidate } =
-    electionAddCandidate;
   const { error: errorStartElection } = useSelector(
     (state) => state.electionStart
   );
@@ -44,13 +52,14 @@ const ElectionScreen = () => {
 
   useEffect(() => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
+    dispatch({ type: ELECTION_ADD_VOTER_RESET });
     dispatch(listElectionDetails(id));
   }, [dispatch, id]);
 
   useEffect(() => {
     if (successAddCandidate) {
-      setEmail("");
-      setAddress("");
+      setCandidateEmail("");
+      setCandidateAddress("");
     }
   }, [successAddCandidate]);
 
@@ -69,17 +78,31 @@ const ElectionScreen = () => {
   const voteHandler = () => {};
 
   const addCandidateHandler = () => {
-    dispatch(addCandidateToElection(election._id, email, address));
+    dispatch(
+      addCandidateToElection(election._id, candidateEmail, candidateAddress)
+    );
   };
 
   const editCandidateHandler = (candidateAddress, candidateEmail) => {
-    setEmail(candidateEmail);
-    setAddress(candidateAddress);
+    setCandidateEmail(candidateEmail);
+    setCandidateAddress(candidateAddress);
     dispatch(deleteCandidateFromElection(candidateAddress, election._id));
   };
 
-  const deleteCandidateHandler = (candidateAddress) => {
-    dispatch(deleteCandidateFromElection(candidateAddress, election._id));
+  const deleteCandidateHandler = (candidateCryptoAddress) => {
+    dispatch(deleteCandidateFromElection(candidateCryptoAddress, election._id));
+  };
+
+  const addVoterHandler = () => {
+    dispatch(addVoterToElection(election._id, voterEmail));
+  };
+
+  const addEveryoneHandler = () => {
+    dispatch(addVoterToElection(election._id, "everyone"));
+  };
+
+  const deleteVoterHandler = (voterEmail) => {
+    dispatch(deleteVoterFromElection(voterEmail, election._id));
   };
 
   return (
@@ -138,8 +161,8 @@ const ElectionScreen = () => {
                           <Form.Control
                             type="email"
                             placeholder="Email Address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={candidateEmail}
+                            onChange={(e) => setCandidateEmail(e.target.value)}
                           ></Form.Control>
                         </Form.Group>
                         <Form.Group controlId="address">
@@ -147,8 +170,10 @@ const ElectionScreen = () => {
                           <Form.Control
                             type="address"
                             placeholder="Crypto Address"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
+                            value={candidateAddress}
+                            onChange={(e) =>
+                              setCandidateAddress(e.target.value)
+                            }
                           ></Form.Control>
                         </Form.Group>
                         <Button
@@ -161,33 +186,34 @@ const ElectionScreen = () => {
                       </Form>
                     </FormContainer>
                   )}
-
-                  <ListGroup.Item>
-                    <Row>
-                      <Col md={3}>
-                        <h5>
-                          <strong>Name</strong>
-                        </h5>
-                      </Col>
-                      <Col md={3}>
-                        <h5>
-                          <strong>Gender</strong>
-                        </h5>
-                      </Col>
-                      <Col md={3}>
-                        <h5>
-                          <strong>Address</strong>
-                        </h5>
-                      </Col>
-                      {user.isAdmin && !election.isStarted && (
+                  {election.candidates?.length !== 0 && (
+                    <ListGroup.Item>
+                      <Row>
                         <Col md={3}>
                           <h5>
-                            <strong>Modify</strong>
+                            <strong>Name</strong>
                           </h5>
                         </Col>
-                      )}
-                    </Row>
-                  </ListGroup.Item>
+                        <Col md={3}>
+                          <h5>
+                            <strong>Gender</strong>
+                          </h5>
+                        </Col>
+                        <Col md={3}>
+                          <h5>
+                            <strong>Address</strong>
+                          </h5>
+                        </Col>
+                        {user.isAdmin && !election.isStarted && (
+                          <Col md={3}>
+                            <h5>
+                              <strong>Modify</strong>
+                            </h5>
+                          </Col>
+                        )}
+                      </Row>
+                    </ListGroup.Item>
+                  )}
                   {election.candidates?.map((candidate) => (
                     <ListGroup.Item key={candidate._id}>
                       <Row>
@@ -221,6 +247,97 @@ const ElectionScreen = () => {
                               onClick={() =>
                                 deleteCandidateHandler(candidate.address)
                               }
+                            >
+                              <i className="fas fa-trash"></i>
+                            </Button>
+                          </Col>
+                        )}
+                      </Row>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <h3>Voters Details</h3>
+                  {!election.isStarted && user.isAdmin && (
+                    <FormContainer>
+                      <h1>Add New Voter</h1>
+                      {errorAddVoter && (
+                        <Message variant="danger">{errorAddVoter}</Message>
+                      )}
+
+                      <Form>
+                        <Form.Group controlId="email">
+                          <Form.Label>Email Address</Form.Label>
+                          <Form.Control
+                            type="email"
+                            placeholder="Email Address"
+                            value={voterEmail}
+                            onChange={(e) => setVoterEmail(e.target.value)}
+                          ></Form.Control>
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          className="my-3"
+                          onClick={() => addVoterHandler()}
+                        >
+                          ADD VOTER
+                        </Button>
+                        <Button
+                          variant="primary"
+                          className="my-3 mx-3"
+                          onClick={() => addEveryoneHandler()}
+                        >
+                          ADD EVERYONE
+                        </Button>
+                      </Form>
+                    </FormContainer>
+                  )}
+                  {election.voters?.length !== 0 && (
+                    <ListGroup.Item>
+                      <Row>
+                        <Col md={3}>
+                          <h5>
+                            <strong>Name</strong>
+                          </h5>
+                        </Col>
+                        <Col md={3}>
+                          <h5>
+                            <strong>Gender</strong>
+                          </h5>
+                        </Col>
+                        <Col md={3}>
+                          <h5>
+                            <strong>Email</strong>
+                          </h5>
+                        </Col>
+                        {user.isAdmin && !election.isStarted && (
+                          <Col md={3}>
+                            <h5>
+                              <strong>Modify</strong>
+                            </h5>
+                          </Col>
+                        )}
+                      </Row>
+                    </ListGroup.Item>
+                  )}
+                  {election.voters?.map((voter) => (
+                    <ListGroup.Item key={voter._id}>
+                      <Row>
+                        <Col md={3}>
+                          <strong>{voter.name}</strong>
+                        </Col>
+                        <Col md={3}>
+                          <strong>{voter.gender}</strong>
+                        </Col>
+                        <Col md={3}>
+                          <strong>{voter.email}</strong>
+                        </Col>
+                        {user.isAdmin && !election.isStarted && (
+                          <Col md={3}>
+                            <Button
+                              variant="danger"
+                              className="btn-sm"
+                              onClick={() => deleteVoterHandler(voter.email)}
                             >
                               <i className="fas fa-trash"></i>
                             </Button>

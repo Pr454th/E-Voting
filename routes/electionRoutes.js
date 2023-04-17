@@ -7,6 +7,8 @@ const {
   updateElectionById,
   addCandidate,
   deleteCandidate,
+  addVoter,
+  deleteVoter,
   startElectionById,
   finishElectionById,
 } = require("../controllers/electionController");
@@ -28,6 +30,10 @@ router
 router.route("/addcandidate/:id").put(protect, admin, addCandidate);
 
 router.route("/deletecandidate/:id").put(protect, admin, deleteCandidate);
+
+router.route("/addvoter/:id").put(protect, admin, addVoter);
+
+router.route("/deletevoter/:id").put(protect, admin, deleteVoter);
 
 router.route("/start/:id").put(protect, admin, startElectionById);
 
