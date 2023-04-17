@@ -49,7 +49,7 @@ const DashboardScreen = () => {
               <Row>
                 {elections &&
                   elections.map((election) => (
-                    <Col key={election._id} sm={12} md={6} lg={4} xl={3}>
+                    <Col key={election._id} sm={12} md={6} lg={4}>
                       <Election election={election} />
                     </Col>
                   ))}

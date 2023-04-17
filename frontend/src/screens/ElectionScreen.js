@@ -33,7 +33,8 @@ const ElectionScreen = () => {
     (state) => state.electionAddCandidate
   );
 
-  const { error: errorAddCandidate } = electionAddCandidate;
+  const { error: errorAddCandidate, success: successAddCandidate } =
+    electionAddCandidate;
   const { error: errorStartElection } = useSelector(
     (state) => state.electionStart
   );
@@ -45,6 +46,13 @@ const ElectionScreen = () => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
     dispatch(listElectionDetails(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (successAddCandidate) {
+      setEmail("");
+      setAddress("");
+    }
+  }, [successAddCandidate]);
 
   const resultHandler = () => {
     navigate(`/result/${id}`);
@@ -62,8 +70,6 @@ const ElectionScreen = () => {
 
   const addCandidateHandler = () => {
     dispatch(addCandidateToElection(election._id, email, address));
-    setEmail("");
-    setAddress("");
   };
 
   const editCandidateHandler = (candidateAddress, candidateEmail) => {
@@ -78,7 +84,7 @@ const ElectionScreen = () => {
 
   return (
     <div>
-      <Meta title={election?.name} />
+      <Meta title={"Election | " + election?._id} />
       <Link className="btn btn-light my-3" to="/dashboard">
         Go Back
       </Link>

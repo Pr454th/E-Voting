@@ -220,6 +220,22 @@ export const updateElection = (election) => async (dispatch, getState) => {
 export const addCandidateToElection =
   (id, email, address) => async (dispatch, getState) => {
     try {
+      if (email === "") {
+        dispatch({
+          type: ELECTION_ADD_CANDIDATE_FAIL,
+          payload: "Email is required",
+        });
+        return;
+      }
+
+      if (address === "") {
+        dispatch({
+          type: ELECTION_ADD_CANDIDATE_FAIL,
+          payload: "Address is required",
+        });
+        return;
+      }
+
       dispatch({
         type: ELECTION_ADD_CANDIDATE_REQUEST,
       });
