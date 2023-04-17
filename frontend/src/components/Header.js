@@ -41,12 +41,17 @@ function Header() {
                 <LinkContainer to="/profile">
                   <Nav.Link>{userInfo?.name}</Nav.Link>
                 </LinkContainer>
-                <LinkContainer to="/admin/userlist">
-                  <Nav.Link>Users</Nav.Link>
-                </LinkContainer>
-                <LinkContainer to="/admin/electionlist">
-                  <Nav.Link>Elections</Nav.Link>
-                </LinkContainer>
+                {userInfo.isAdmin && (
+                  <Nav>
+                    <LinkContainer to="/admin/userlist">
+                      <Nav.Link>Users</Nav.Link>
+                    </LinkContainer>
+                    <LinkContainer to="/admin/electionlist">
+                      <Nav.Link>Elections</Nav.Link>
+                    </LinkContainer>
+                  </Nav>
+                )}
+
                 <LinkContainer to="/login">
                   <Nav.Link onClick={logoutHandler}>Logout</Nav.Link>
                 </LinkContainer>
@@ -55,8 +60,7 @@ function Header() {
               <Nav>
                 <LinkContainer to="/login">
                   <Nav.Link>
-                    <i className="fas fa-user" />
-                    Sign In
+                    <i className="fas fa-user" /> Sign In
                   </Nav.Link>
                 </LinkContainer>
               </Nav>
