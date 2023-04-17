@@ -259,33 +259,27 @@ const ElectionScreen = () => {
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {user.isAdmin ? (
-                      !election.isStarted ? (
+                    {user.isAdmin &&
+                      (!election.isStarted ? (
                         <Button
                           onClick={startHandler}
-                          className="btn btn-block"
+                          className="btn btn-block mx-3"
                           type="button"
                         >
                           Start Election
                         </Button>
-                      ) : election.isFinished ? (
-                        <Button
-                          onClick={resultHandler}
-                          className="btn btn-block"
-                          type="button"
-                        >
-                          View Result
-                        </Button>
                       ) : (
-                        <Button
-                          onClick={finishHandler}
-                          className="btn btn-block"
-                          type="button"
-                        >
-                          Finish Election
-                        </Button>
-                      )
-                    ) : election.isStarted ? (
+                        !election.isFinished && (
+                          <Button
+                            onClick={finishHandler}
+                            className="btn btn-block mx-3"
+                            type="button"
+                          >
+                            Finish Election
+                          </Button>
+                        )
+                      ))}
+                    {election.isStarted ? (
                       election.isFinished ? (
                         <Button
                           onClick={resultHandler}
