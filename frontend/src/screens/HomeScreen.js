@@ -9,7 +9,7 @@ const HomeScreen = () => {
     dispatch(getContract());
   }, [dispatch]);
 
-  return <div>HomePage</div>;
+  return <h3 className="text-center">HomePage</h3>;
 };
 
 export default HomeScreen;

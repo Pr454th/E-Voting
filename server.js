@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const colors = require("colors");
+const cookieParser = require("cookie-parser");
 const { connectDB } = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleWare");
 const userRoutes = require("./routes/userRoutes");
@@ -12,7 +13,7 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.use("/api/users", userRoutes);
 app.use("/api/elections", electionRoutes);
 

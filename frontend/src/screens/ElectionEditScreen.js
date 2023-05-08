@@ -18,8 +18,17 @@ const ElectionEditScreen = () => {
   const [description, setDescription] = useState("");
 
   const dispatch = useDispatch();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: user } = userLogin;
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
@@ -34,16 +43,16 @@ const ElectionEditScreen = () => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: ELECTION_UPDATE_RESET });
-      history("/admin/electionlist");
+      navigate("/admin/electionlist");
     } else {
-      if (!election.name || election._id !== id) {
+      if (election?.name === undefined || election._id !== id) {
         dispatch(listElectionDetails(id));
       } else {
         setName(election.name);
         setDescription(election.description);
       }
     }
-  }, [dispatch, history, id, election, successUpdate]);
+  }, [dispatch, navigate, id, election, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();

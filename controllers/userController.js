@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
 const asyncHandler = require("express-async-handler");
@@ -7,16 +8,42 @@ const authUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
-    res.json({
+    data = {
       _id: user._id,
       name: user.name,
       email: user.email,
+      gender: user.gender,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
+    };
+    res.cookie("token", data.token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
     });
+    res.status(201).json(data);
   } else {
     res.status(401);
     throw new Error("Invalid Email or Password");
+  }
+});
+
+const loggedInUser = asyncHandler(async (req, res) => {
+  try {
+    const token = req.cookies["token"];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    data = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      gender: user.gender,
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    };
+    res.status(201).json(data);
+  } catch (error) {
+    res.status(401);
+    throw new Error("Not Authorized, Token Failed");
   }
 });
 
@@ -38,18 +65,28 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    res.status(201).json({
+    data = {
       _id: user._id,
       name: user.name,
       email: user.email,
       gender: user.gender,
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
+    };
+    res.cookie("token", data.token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
     });
+    res.status(201).json(data);
   } else {
     res.status(400);
     throw new Error("Invalid User Data");
   }
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  res.clearCookie("token");
+  res.status(201).json({ message: "Logged Out" });
 });
 
 const getUserProfile = asyncHandler(async (req, res) => {
@@ -147,7 +184,9 @@ const updateUserById = asyncHandler(async (req, res) => {
 
 module.exports = {
   authUser,
+  loggedInUser,
   registerUser,
+  logoutUser,
   getUserProfile,
   updateUserProfile,
   getUsers,

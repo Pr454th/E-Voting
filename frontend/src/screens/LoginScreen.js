@@ -24,7 +24,7 @@ const LoginScreen = () => {
     : "/dashboard";
 
   useEffect(() => {
-    if (userInfo?._id) {
+    if (userInfo?._id !== undefined) {
       history(redirect);
     }
   }, [history, userInfo, redirect]);
