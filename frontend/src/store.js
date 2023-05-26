@@ -23,7 +23,6 @@ import {
   electionAddVoterReducer,
   electionDeleteVoterReducer,
 } from "./reducers/electionReducers";
-import { walletDetailsReducer } from "./reducers/walletReducers";
 import { contractDetailsReducer } from "./reducers/contractReducers";
 
 const reducer = combineReducers({
@@ -45,17 +44,10 @@ const reducer = combineReducers({
   electionDeleteCandidate: electionDeleteCandidateReducer,
   electionAddVoter: electionAddVoterReducer,
   electionDeleteVoter: electionDeleteVoterReducer,
-  walletDetails: walletDetailsReducer,
   contractDetails: contractDetailsReducer,
 });
 
-const userInfoFromStorage = localStorage.getItem("userInfo")
-  ? JSON.parse(localStorage.getItem("userInfo"))
-  : [];
-
-const initialState = {
-  userLogin: { userInfo: userInfoFromStorage },
-};
+const initialState = {};
 
 const middleware = [thunk];
 const store = createStore(

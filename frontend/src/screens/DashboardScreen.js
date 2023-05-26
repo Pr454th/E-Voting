@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Row, Col } from "react-bootstrap";
 import { ConnectWallet } from "@thirdweb-dev/react";
@@ -11,7 +11,17 @@ import { listElections } from "../actions/electionActions";
 
 const DashboardScreen = () => {
   const { keyword } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: user } = userLogin;
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   const electionList = useSelector((state) => state.electionList);
   const { loading, error, elections } = electionList;

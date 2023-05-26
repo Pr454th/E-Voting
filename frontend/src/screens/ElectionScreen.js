@@ -21,17 +21,23 @@ import {
 } from "../constants/electionConstants";
 
 const ElectionScreen = () => {
-  const [candidateEmail, setCandidateEmail] = useState("");
-  const [candidateAddress, setCandidateAddress] = useState("");
-
-  const [voterEmail, setVoterEmail] = useState("");
-
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo: user } = userLogin;
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
+
+  const [candidateEmail, setCandidateEmail] = useState("");
+  const [candidateAddress, setCandidateAddress] = useState("");
+
+  const [voterEmail, setVoterEmail] = useState("");
 
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
@@ -148,7 +154,7 @@ const ElectionScreen = () => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h3>Candidate Details</h3>
-                  {!election.isStarted && user.isAdmin && (
+                  {!election.isStarted && user?.isAdmin && (
                     <FormContainer>
                       <h1>Add New Candiate</h1>
                       {errorAddCandidate && (
@@ -204,7 +210,7 @@ const ElectionScreen = () => {
                             <strong>Address</strong>
                           </h5>
                         </Col>
-                        {user.isAdmin && !election.isStarted && (
+                        {user?.isAdmin && !election.isStarted && (
                           <Col md={3}>
                             <h5>
                               <strong>Modify</strong>
@@ -258,7 +264,7 @@ const ElectionScreen = () => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h3>Voters Details</h3>
-                  {!election.isStarted && user.isAdmin && (
+                  {!election.isStarted && user?.isAdmin && (
                     <FormContainer>
                       <h1>Add New Voter</h1>
                       {errorAddVoter && (
@@ -310,7 +316,7 @@ const ElectionScreen = () => {
                             <strong>Email</strong>
                           </h5>
                         </Col>
-                        {user.isAdmin && !election.isStarted && (
+                        {user?.isAdmin && !election.isStarted && (
                           <Col md={3}>
                             <h5>
                               <strong>Modify</strong>
@@ -376,7 +382,7 @@ const ElectionScreen = () => {
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {user.isAdmin &&
+                    {user?.isAdmin &&
                       (!election.isStarted ? (
                         <Button
                           onClick={startHandler}

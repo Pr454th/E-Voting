@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { listElectionDetails } from "../actions/electionActions";
 import { Tabs, Tab } from "react-bootstrap";
 
@@ -120,7 +120,17 @@ function sum(arr) {
 
 export default function ResultScreen() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: user } = userLogin;
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
 
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;

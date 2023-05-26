@@ -2,13 +2,14 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
-import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
 import SearchBox from "./SearchBox";
 import { logOut } from "../actions/userActions";
 
 function Header() {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -17,13 +18,16 @@ function Header() {
 
   const logoutHandler = () => {
     dispatch(logOut());
+    navigate("/login");
   };
 
   return (
     <header>
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
-          <Navbar.Brand>E-Voting</Navbar.Brand>
+          <LinkContainer to="/">
+            <Navbar.Brand>E-Voting</Navbar.Brand>
+          </LinkContainer>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 

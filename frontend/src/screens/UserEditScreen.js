@@ -23,6 +23,12 @@ const UserEditScreen = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
+  useEffect(() => {
+    if (!user) {
+      history("/login");
+    }
+  }, []);
+
   const userUpdate = useSelector((state) => state.userUpdate);
   const {
     loading: loadingUpdate,
@@ -119,7 +125,7 @@ const UserEditScreen = () => {
               ></Form.Check>
             </Form.Group>
             <br />
-            <Button type="submit" variant="primary" class="my-3">
+            <Button type="submit" variant="primary" className="my-3">
               Update
             </Button>
           </Form>
