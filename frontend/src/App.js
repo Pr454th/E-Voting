@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import LoginScreen from "./screens/LoginScreen";
@@ -20,14 +21,20 @@ import ElectionEditScreen from "./screens/ElectionEditScreen";
 import PageNotFoundScreen from "./screens/PageNotFoundScreen";
 import { USER_LOGIN_SUCCESS } from "./constants/userConstants";
 import Loader from "./components/Loader";
+import { getContract } from "./actions/contractActions";
 
 function App() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const [cookies] = useCookies(["token"]);
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: user } = userLogin;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        if (cookies.token == undefined) return;
         const { data } = await axios.get("/api/users/auth");
         if (data?.name) {
           dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
@@ -39,6 +46,12 @@ function App() {
     };
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getContract());
+    }
+  }, [user]);
 
   return (
     <>
