@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Row, Col, ListGroup, Card, Button, Form } from "react-bootstrap";
+import {
+  useContract,
+  useAddress,
+  useContractWrite,
+  useContractRead,
+} from "@thirdweb-dev/react";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import FormContainer from "../components/FormContainer";
@@ -18,6 +24,7 @@ import {
 import {
   ELECTION_ADD_CANDIDATE_RESET,
   ELECTION_ADD_VOTER_RESET,
+  ELECTION_ADD_CANDIDATE_FAIL,
 } from "../constants/electionConstants";
 
 const ElectionScreen = () => {
@@ -38,6 +45,10 @@ const ElectionScreen = () => {
   const [candidateAddress, setCandidateAddress] = useState("");
 
   const [voterEmail, setVoterEmail] = useState("");
+  const [selectedVoter, setSelectedVoter] = useState("");
+  const [start, setStart] = useState(false);
+  const [finish, setFinish] = useState(false);
+  const [add, setAdd] = useState(false);
 
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
@@ -45,8 +56,8 @@ const ElectionScreen = () => {
   const { error: errorAddCandidate, success: successAddCandidate } =
     useSelector((state) => state.electionAddCandidate);
 
-  const { error: errorAddVoter, success: successAddVoter } = useSelector(
-    (state) => state.electionAddCandidate
+  const { error: errorAddVoter } = useSelector(
+    (state) => state.electionAddVoter
   );
 
   const { error: errorStartElection } = useSelector(
@@ -55,6 +66,26 @@ const ElectionScreen = () => {
   const { error: errorFinishElection } = useSelector(
     (state) => state.electionFinish
   );
+
+  const { contract } = useContract(process.env.REACT_APP_CONTRACT_ADDRESS);
+
+  const { mutateAsync: setStatus, isLoading: statusLoad } = useContractWrite(
+    contract,
+    "setStatus"
+  );
+  const { mutateAsync: registerCandidates, isLoading: addCandidateLoad } =
+    useContractWrite(contract, "registerCandidates");
+  const { mutateAsync: vote, isLoading: voteLoad } = useContractWrite(
+    contract,
+    "vote"
+  );
+  const { data: totalVotes } = useContractRead(contract, "getTotalVotes", [
+    election._id,
+  ]);
+
+  const { data: isVoted } = useContractRead(contract, "isVoted", [
+    election._id,
+  ]);
 
   useEffect(() => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
@@ -69,24 +100,108 @@ const ElectionScreen = () => {
     }
   }, [successAddCandidate]);
 
+  const isVoterCheck = () => {
+    for (let i = 0; i < election?.voters?.length; i++) {
+      if (election.voters[i].email == user.email) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const resultHandler = () => {
     navigate(`/result/${id}`);
   };
 
+  useEffect(() => {
+    if (finish) {
+      dispatch(finishElection(election._id));
+    }
+  }, [finish]);
+
   const finishHandler = () => {
-    dispatch(finishElection(election._id));
+    const finish = async () => {
+      try {
+        const data = await setStatus({ args: [election._id] });
+        console.info(data);
+        setFinish(true);
+      } catch (err) {}
+    };
+    finish();
   };
+
+  useEffect(() => {
+    if (start) {
+      dispatch(startElection(election._id));
+    }
+  }, [start]);
 
   const startHandler = () => {
-    dispatch(startElection(election._id));
+    const start = async () => {
+      try {
+        const data = await setStatus({ args: [election._id] });
+        console.info(data);
+        setStart(true);
+      } catch (err) {}
+    };
+    if (election.candidates.length > 1 && election.voters.length > 0) {
+      start();
+    } else {
+      setStart(true);
+    }
   };
 
-  const voteHandler = () => {};
+  const voteHandler = () => {
+    console.log(isVoted);
+    const voteAction = async () => {
+      try {
+        const data = await vote({ args: [selectedVoter, election._id] });
+        console.log(data);
+      } catch (err) {}
+    };
+    voteAction();
+  };
+
+  useEffect(() => {
+    if (add) {
+      dispatch(
+        addCandidateToElection(election._id, candidateEmail, candidateAddress)
+      );
+      setAdd(false);
+    }
+  }, [add]);
 
   const addCandidateHandler = () => {
-    dispatch(
-      addCandidateToElection(election._id, candidateEmail, candidateAddress)
-    );
+    const add = async () => {
+      try {
+        const data = await registerCandidates({
+          args: [candidateEmail, candidateAddress, election._id],
+        });
+        setAdd(true);
+        console.log(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    const validateAddress = (address) => {
+      const regex = /^(0x)?[0-9a-fA-F]{40}$/;
+      const isValidAddress = regex.test(address);
+      console.log(isValidAddress);
+      return isValidAddress;
+    };
+
+    if (candidateEmail && candidateAddress) {
+      if (validateAddress(candidateAddress)) {
+        add();
+      } else {
+        dispatch({
+          type: ELECTION_ADD_CANDIDATE_FAIL,
+          payload: "Invalid Crypto Address",
+        });
+      }
+    } else {
+      setAdd(true);
+    }
   };
 
   const editCandidateHandler = (candidateAddress, candidateEmail) => {
@@ -182,13 +297,23 @@ const ElectionScreen = () => {
                             }
                           ></Form.Control>
                         </Form.Group>
-                        <Button
-                          variant="primary"
-                          className="my-3"
-                          onClick={() => addCandidateHandler()}
-                        >
-                          ADD CANDIDATE
-                        </Button>
+                        {addCandidateLoad ? (
+                          <div className="my-3">
+                            <Loader
+                              width={"35px"}
+                              height={"35px"}
+                              margin={"0px"}
+                            />
+                          </div>
+                        ) : (
+                          <Button
+                            variant="primary"
+                            className="my-3"
+                            onClick={() => addCandidateHandler()}
+                          >
+                            ADD CANDIDATE
+                          </Button>
+                        )}
                       </Form>
                     </FormContainer>
                   )}
@@ -217,6 +342,15 @@ const ElectionScreen = () => {
                             </h5>
                           </Col>
                         )}
+                        {isVoterCheck() &&
+                          !election.isFinished &&
+                          election.isStarted && (
+                            <Col md={3}>
+                              <h5 className="text-center">
+                                <strong>Choose</strong>
+                              </h5>
+                            </Col>
+                          )}
                       </Row>
                     </ListGroup.Item>
                   )}
@@ -230,7 +364,12 @@ const ElectionScreen = () => {
                           <strong>{candidate.gender}</strong>
                         </Col>
                         <Col md={3}>
-                          <strong>{candidate.address}</strong>
+                          <strong>
+                            {candidate.address.substring(0, 5)}.....
+                            {candidate.address.substring(
+                              candidate.address.length - 4
+                            )}
+                          </strong>
                         </Col>
                         {user.isAdmin && !election.isStarted && (
                           <Col md={3}>
@@ -258,6 +397,22 @@ const ElectionScreen = () => {
                             </Button>
                           </Col>
                         )}
+                        {isVoterCheck() &&
+                          !election.isFinished &&
+                          election.isStarted && (
+                            <Col md={3}>
+                              <h5 className="text-center">
+                                <Form.Check
+                                  type="checkbox"
+                                  value={candidate.address}
+                                  checked={candidate.address === selectedVoter}
+                                  onChange={(e) =>
+                                    setSelectedVoter(e.target.value)
+                                  }
+                                />
+                              </h5>
+                            </Col>
+                          )}
                       </Row>
                     </ListGroup.Item>
                   ))}
@@ -378,21 +533,40 @@ const ElectionScreen = () => {
                   <ListGroup.Item>
                     <Row>
                       <Col>Votes Recieved</Col>
-                      <Col>{election.voters?.length}</Col>
+                      <Col>{totalVotes ? Number(totalVotes) : 0}</Col>
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item>
                     {user?.isAdmin &&
                       (!election.isStarted ? (
-                        <Button
-                          onClick={startHandler}
-                          className="btn btn-block mx-3"
-                          type="button"
-                        >
-                          Start Election
-                        </Button>
+                        statusLoad ? (
+                          <div className="my-3">
+                            <Loader
+                              width={"35px"}
+                              height={"35px"}
+                              margin={"0px"}
+                            />
+                          </div>
+                        ) : (
+                          <Button
+                            onClick={startHandler}
+                            className="btn btn-block mx-3"
+                            type="button"
+                          >
+                            Start Election
+                          </Button>
+                        )
                       ) : (
-                        !election.isFinished && (
+                        !election.isFinished &&
+                        (statusLoad ? (
+                          <div className="my-3">
+                            <Loader
+                              width={"35px"}
+                              height={"35px"}
+                              margin={"0px"}
+                            />
+                          </div>
+                        ) : (
                           <Button
                             onClick={finishHandler}
                             className="btn btn-block mx-3"
@@ -400,9 +574,9 @@ const ElectionScreen = () => {
                           >
                             Finish Election
                           </Button>
-                        )
+                        ))
                       ))}
-                    {election.isStarted ? (
+                    {election.isStarted && isVoterCheck() ? (
                       election.isFinished ? (
                         <Button
                           onClick={resultHandler}
@@ -411,6 +585,14 @@ const ElectionScreen = () => {
                         >
                           View Result
                         </Button>
+                      ) : voteLoad ? (
+                        <div className="my-3">
+                          <Loader
+                            width={"35px"}
+                            height={"35px"}
+                            margin={"0px"}
+                          />
+                        </div>
                       ) : (
                         <Button
                           onClick={voteHandler}
