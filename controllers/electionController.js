@@ -206,6 +206,11 @@ const startElectionById = asyncHandler(async (req, res) => {
       throw new Error("Election Must Have At Least 2 Candidates");
     }
 
+    if (election.voters.length < 1) {
+      res.status(400);
+      throw new Error("Election Must Have At Least 1 Voter");
+    }
+
     election.isStarted = true;
     election.startedAt = Date.now();
     const updatedElection = await election.save();
