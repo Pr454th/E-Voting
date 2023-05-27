@@ -1,14 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
-import { getContract } from "../actions/contractActions";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getContract());
-  }, [dispatch]);
 
   return (
     <div>

@@ -17,7 +17,7 @@ const authUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     };
     res.cookie("token", data.token, {
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 1000 * 60 * 60 * 24,
     });
     res.status(201).json(data);
@@ -74,7 +74,7 @@ const registerUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     };
     res.cookie("token", data.token, {
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 1000 * 60 * 60 * 24,
     });
     res.status(201).json(data);

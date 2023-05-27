@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
+import {
+  useContract,
+  useAddress,
+  useContractWrite,
+  useContractRead,
+} from "@thirdweb-dev/react";
+import { ethers } from "ethers";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
@@ -12,6 +19,7 @@ import { ELECTION_CREATE_RESET } from "../constants/electionConstants";
 const ElectionCreateScreen = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [backend, setBackend] = useState(false);
 
   const history = useNavigate();
   const dispatch = useDispatch();
@@ -25,15 +33,34 @@ const ElectionCreateScreen = () => {
   const electionDetails = useSelector((state) => state.electionDetails);
   const { election } = electionDetails;
 
+  const { contract } = useContract(process.env.REACT_APP_CONTRACT_ADDRESS);
+
+  const { mutateAsync: createElection, isLoading } = useContractWrite(
+    contract,
+    "createElection"
+  );
+
   useEffect(() => {
     if (!userInfo?.isAdmin) {
       history("/login");
     }
-    if (success) {
-      dispatch({ type: ELECTION_CREATE_RESET });
+    if (success && backend) {
       history(`/elections/${election._id}`);
     }
-  }, [dispatch, success, userInfo?.isAdmin, history]);
+  }, [dispatch, success, userInfo?.isAdmin, backend, history]);
+
+  useEffect(() => {
+    const create = async () => {
+      try {
+        const data = await createElection({ args: [name, election._id] });
+        setBackend(true);
+        console.log(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (success) create();
+  }, [success]);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -72,9 +99,20 @@ const ElectionCreateScreen = () => {
                 onChange={(e) => setDescription(e.target.value)}
               ></Form.Control>
             </Form.Group>
-            <Button type="submit" variant="primary" className="my-3">
-              Create
-            </Button>
+            {isLoading ? (
+              <div className="my-3">
+                <Loader width={"35px"} height={"35px"} margin={"0px"} />
+              </div>
+            ) : (
+              <Button
+                type="submit"
+                variant="primary"
+                className="my-3"
+                onClick={submitHandler}
+              >
+                Create
+              </Button>
+            )}
           </Form>
         )}
       </FormContainer>
