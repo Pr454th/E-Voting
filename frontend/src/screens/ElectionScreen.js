@@ -25,12 +25,15 @@ import {
   ELECTION_ADD_CANDIDATE_RESET,
   ELECTION_ADD_VOTER_RESET,
   ELECTION_ADD_CANDIDATE_FAIL,
+  ELECTION_START_FAIL,
+  ELECTION_START_RESET,
 } from "../constants/electionConstants";
 
 const ElectionScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const address = useAddress();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo: user } = userLogin;
@@ -85,11 +88,13 @@ const ElectionScreen = () => {
 
   const { data: isVoted } = useContractRead(contract, "isVoted", [
     election._id,
+    address,
   ]);
 
   useEffect(() => {
     dispatch({ type: ELECTION_ADD_CANDIDATE_RESET });
     dispatch({ type: ELECTION_ADD_VOTER_RESET });
+    dispatch({ type: ELECTION_START_RESET });
     dispatch(listElectionDetails(id));
   }, [dispatch, id]);
 
@@ -116,6 +121,7 @@ const ElectionScreen = () => {
   useEffect(() => {
     if (finish) {
       dispatch(finishElection(election._id));
+      setFinish(false);
     }
   }, [finish]);
 
@@ -133,6 +139,7 @@ const ElectionScreen = () => {
   useEffect(() => {
     if (start) {
       dispatch(startElection(election._id));
+      setStart(false);
     }
   }, [start]);
 
@@ -152,14 +159,21 @@ const ElectionScreen = () => {
   };
 
   const voteHandler = () => {
-    console.log(isVoted);
+    dispatch({ type: ELECTION_START_RESET });
     const voteAction = async () => {
       try {
         const data = await vote({ args: [selectedVoter, election._id] });
         console.log(data);
       } catch (err) {}
     };
-    voteAction();
+    if (!isVoted) {
+      voteAction();
+    } else {
+      dispatch({
+        type: ELECTION_START_FAIL,
+        payload: "You have already voted",
+      });
+    }
   };
 
   useEffect(() => {
@@ -537,75 +551,60 @@ const ElectionScreen = () => {
                     </Row>
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    {user?.isAdmin &&
-                      (!election.isStarted ? (
-                        statusLoad ? (
-                          <div className="my-3">
-                            <Loader
-                              width={"35px"}
-                              height={"35px"}
-                              margin={"0px"}
-                            />
-                          </div>
-                        ) : (
-                          <Button
-                            onClick={startHandler}
-                            className="btn btn-block mx-3"
-                            type="button"
-                          >
-                            Start Election
-                          </Button>
-                        )
-                      ) : (
-                        !election.isFinished &&
-                        (statusLoad ? (
-                          <div className="my-3">
-                            <Loader
-                              width={"35px"}
-                              height={"35px"}
-                              margin={"0px"}
-                            />
-                          </div>
-                        ) : (
-                          <Button
-                            onClick={finishHandler}
-                            className="btn btn-block mx-3"
-                            type="button"
-                          >
-                            Finish Election
-                          </Button>
-                        ))
-                      ))}
-                    {election.isStarted && isVoterCheck() ? (
-                      election.isFinished ? (
-                        <Button
-                          onClick={resultHandler}
-                          className="btn btn-block"
-                          type="button"
-                        >
-                          View Result
-                        </Button>
-                      ) : voteLoad ? (
-                        <div className="my-3">
-                          <Loader
-                            width={"35px"}
-                            height={"35px"}
-                            margin={"0px"}
-                          />
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={voteHandler}
-                          className="btn btn-block"
-                          type="button"
-                        >
-                          Vote Now
-                        </Button>
-                      )
+                    {statusLoad || voteLoad ? (
+                      <div className="my-3">
+                        <Loader height="35px" width="35px" margin="0px" />
+                      </div>
                     ) : (
-                      <Button className="btn btn-block" type="button" disabled>
-                        Vote Now
-                      </Button>
+                      <>
+                        {user.isAdmin &&
+                          (!election.isStarted ? (
+                            <Button
+                              onClick={startHandler}
+                              className="btn btn-block mx-3"
+                              type="button"
+                            >
+                              Start Election
+                            </Button>
+                          ) : (
+                            !election.isFinished && (
+                              <Button
+                                onClick={finishHandler}
+                                className="btn btn-block mx-3"
+                                type="button"
+                              >
+                                Finish Election
+                              </Button>
+                            )
+                          ))}
+                        {election.isStarted && isVoterCheck() ? (
+                          election.isFinished ? (
+                            <Button
+                              onClick={resultHandler}
+                              className="btn btn-block"
+                              type="button"
+                            >
+                              View Result
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={voteHandler}
+                              className="btn btn-block"
+                              type="button"
+                            >
+                              Vote Now
+                            </Button>
+                          )
+                        ) : (
+                          <Button
+                            className="btn btn-block"
+                            type="button"
+                            disabled
+                          >
+                            Vote Now
+                          </Button>
+                        )}
+                      </>
                     )}
                   </ListGroup.Item>
                 </ListGroup>
