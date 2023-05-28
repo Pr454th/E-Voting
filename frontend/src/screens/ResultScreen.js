@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { listElectionDetails } from "../actions/electionActions";
@@ -18,6 +18,12 @@ import { Bar, Pie } from "react-chartjs-2";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Meta from "../components/Meta";
+import {
+  useContract,
+  useAddress,
+  useContractWrite,
+  useContractRead,
+} from "@thirdweb-dev/react";
 
 ChartJS.register(
   CategoryScale,
@@ -132,8 +138,72 @@ export default function ResultScreen() {
     }
   }, []);
 
+  const { contract } = useContract(process.env.REACT_APP_CONTRACT_ADDRESS);
+  const [winner, setWinner] = useState("");
+  const [winnerVotes, setWinnerVotes] = useState(0);
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
+  const [total, setTotal] = useState(0);
+  const [backgroundColor, setBackgroundColor] = useState([]);
+  const [uniqueResults, setUniqueResults] = useState([]);
+  const { data: getElectionResults, isLoading } = useContractRead(
+    contract,
+    "getElectionResults",
+    [election._id]
+  );
+  const { data: totalVotes } = useContractRead(contract, "getTotalVotes", [
+    election._id,
+  ]);
+
+  //removing duplicates
+  if (!isLoading) {
+  }
+  useEffect(() => {
+    if (!isLoading) {
+      setUniqueResults(
+        Array.from(new Set(getElectionResults.map(JSON.stringify)), JSON.parse)
+      );
+    }
+  }, [getElectionResults]);
+  const [votesMapping, setVotesMapping] = useState({});
+  // const votesMapping = {};
+  useEffect(() => {
+    if (!isLoading) {
+      uniqueResults.forEach((result) => {
+        const address = result[0];
+        const votes = result[2].hex;
+        console.log(votes);
+        // If the address is not present, initialize the votes
+        if (!votesMapping[address])
+          votesMapping[address] = votes ? Number(votes) : 0;
+        setTotal((prev) => prev + votesMapping[address]);
+      });
+    }
+
+    let winnerAddress;
+    let maxVotes = 0;
+
+    // Iterate over the entries of the votesMapping
+    for (const [address, votes] of Object.entries(votesMapping)) {
+      if (votes > maxVotes) {
+        maxVotes = votes;
+        winnerAddress = address;
+      }
+    }
+    for (let i = 0; i < election?.candidates?.length; i++) {
+      if (election?.candidates[i]?.address === winnerAddress) {
+        setWinner(election?.candidates[i]?.name);
+        setWinnerVotes(maxVotes);
+      }
+    }
+    console.log("Winner:", winner);
+    console.log("Winner Votes:", winnerVotes);
+
+    console.log("Winner Address:", winnerAddress);
+    console.log("Number of Votes:", maxVotes);
+
+    console.log(votesMapping);
+  }, [election?.candidates?.length, uniqueResults]);
 
   useEffect(() => {
     dispatch(listElectionDetails(id));
@@ -144,7 +214,7 @@ export default function ResultScreen() {
     datasets: [
       {
         label: "Votes",
-        data: election?.candidates?.map((candidate) => candidate.votes),
+        data: Object.values(votesMapping),
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -175,17 +245,13 @@ export default function ResultScreen() {
       <h1>Result Screen</h1>
       {data?.labels?.length > 0 && (
         <>
-          <h5>Winner: {data?.labels[indexOfMax(data?.datasets[0]?.data)]}</h5>
+          <h5>Winner: {winner}</h5>
           <h5>
-            Number of Votes:{" "}
-            {data?.datasets[0]?.data[indexOfMax(data?.datasets[0]?.data)]}
+            Number of Votes: {winnerVotes === 0 ? "No votes yet" : winnerVotes}
           </h5>
           <h5>
-            Percentage of Votes:{" "}
-            {(data.datasets[0].data[indexOfMax(data.datasets[0].data)] /
-              sum(data.datasets[0].data)) *
-              100}
-            %
+            Percentage of Votes:
+            {(winnerVotes / Number(totalVotes)) * 100}%
           </h5>
         </>
       )}

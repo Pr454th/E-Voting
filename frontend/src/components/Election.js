@@ -7,7 +7,7 @@ const Election = ({ election }) => {
   const navigate = useNavigate();
 
   const voteHandler = (id) => {
-    navigate(`/vote/${id}`);
+    navigate(`/elections/${id}`);
   };
 
   const resultHandler = (id) => {
