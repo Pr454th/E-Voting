@@ -18,12 +18,7 @@ import { Bar, Pie } from "react-chartjs-2";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Meta from "../components/Meta";
-import {
-  useContract,
-  useAddress,
-  useContractWrite,
-  useContractRead,
-} from "@thirdweb-dev/react";
+import { useContract, useContractRead } from "@thirdweb-dev/react";
 
 ChartJS.register(
   CategoryScale,
@@ -101,29 +96,6 @@ const optionsForPie = {
   },
 };
 
-function indexOfMax(arr) {
-  if (arr?.length > 0) {
-    var max = arr[0];
-    var maxIndex = 0;
-
-    for (var i = 1; i < arr.length; i++) {
-      if (arr[i] > max) {
-        maxIndex = i;
-        max = arr[i];
-      }
-    }
-    return maxIndex;
-  }
-}
-
-function sum(arr) {
-  var sum = 0;
-  for (var i = 0; i < arr.length; i++) {
-    sum += arr[i];
-  }
-  return sum;
-}
-
 export default function ResultScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -144,7 +116,6 @@ export default function ResultScreen() {
   const electionDetails = useSelector((state) => state.electionDetails);
   const { loading, error, election } = electionDetails;
   const [total, setTotal] = useState(0);
-  const [backgroundColor, setBackgroundColor] = useState([]);
   const [uniqueResults, setUniqueResults] = useState([]);
   const { data: getElectionResults, isLoading } = useContractRead(
     contract,
@@ -155,7 +126,6 @@ export default function ResultScreen() {
     election._id,
   ]);
 
-  //removing duplicates
   if (!isLoading) {
   }
   useEffect(() => {
@@ -166,24 +136,20 @@ export default function ResultScreen() {
     }
   }, [getElectionResults]);
   const [votesMapping, setVotesMapping] = useState({});
-  // const votesMapping = {};
   useEffect(() => {
     if (!isLoading) {
       uniqueResults.forEach((result) => {
         const address = result[0];
         const votes = result[2].hex;
-        console.log(votes);
-        // If the address is not present, initialize the votes
         if (!votesMapping[address])
           votesMapping[address] = votes ? Number(votes) : 0;
         setTotal((prev) => prev + votesMapping[address]);
       });
     }
 
-    let winnerAddress;
-    let maxVotes = 0;
+    let winnerAddress,
+      maxVotes = 0;
 
-    // Iterate over the entries of the votesMapping
     for (const [address, votes] of Object.entries(votesMapping)) {
       if (votes > maxVotes) {
         maxVotes = votes;
@@ -196,13 +162,6 @@ export default function ResultScreen() {
         setWinnerVotes(maxVotes);
       }
     }
-    console.log("Winner:", winner);
-    console.log("Winner Votes:", winnerVotes);
-
-    console.log("Winner Address:", winnerAddress);
-    console.log("Number of Votes:", maxVotes);
-
-    console.log(votesMapping);
   }, [election?.candidates?.length, uniqueResults]);
 
   useEffect(() => {
@@ -257,29 +216,27 @@ export default function ResultScreen() {
       )}
       {loading ? (
         <Loader />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
       ) : (
-        <>
-          <Tabs
-            defaultActiveKey="bar"
-            id="uncontrolled-tab-example"
-            className="mb-3"
-          >
-            <Tab eventKey="bar" title="Bar">
-              <Bar options={options} data={data} />
-            </Tab>
-            <Tab eventKey="pie" title="Pie">
-              <center>
-                <div style={{ width: "70%", height: "70%" }}>
-                  <Pie data={data} options={optionsForPie} />
-                </div>
-              </center>
-            </Tab>
-          </Tabs>
-        </>
+        error && <Message variant="danger">{error}</Message>
       )}
-      ;
+      <>
+        <Tabs
+          defaultActiveKey="bar"
+          id="uncontrolled-tab-example"
+          className="mb-3"
+        >
+          <Tab eventKey="bar" title="Bar">
+            <Bar options={options} data={data} />
+          </Tab>
+          <Tab eventKey="pie" title="Pie">
+            <center>
+              <div style={{ width: "70%", height: "70%" }}>
+                <Pie data={data} options={optionsForPie} />
+              </div>
+            </center>
+          </Tab>
+        </Tabs>
+      </>
     </div>
   );
 }
