@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import {
-  useContract,
-  useAddress,
-  useContractWrite,
-  useContractRead,
-} from "@thirdweb-dev/react";
-import { ethers } from "ethers";
+import { useContract, useContractWrite } from "@thirdweb-dev/react";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
@@ -63,6 +57,7 @@ const ElectionCreateScreen = () => {
   }, [success]);
 
   const submitHandler = (e) => {
+    dispatch({ type: ELECTION_CREATE_RESET });
     e.preventDefault();
     dispatch(addElection(name, description));
   };
@@ -75,46 +70,41 @@ const ElectionCreateScreen = () => {
       </Link>
       <FormContainer>
         <h1>Create Election</h1>
-        {loading ? (
-          <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
-        ) : (
-          <Form onSubmit={submitHandler}>
-            <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="name"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            <Form.Group controlId="description">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                type="name"
-                placeholder="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></Form.Control>
-            </Form.Group>
-            {isLoading ? (
-              <div className="my-3">
-                <Loader width={"35px"} height={"35px"} margin={"0px"} />
-              </div>
-            ) : (
-              <Button
-                type="submit"
-                variant="primary"
-                className="my-3"
-                onClick={submitHandler}
-              >
-                Create
-              </Button>
-            )}
-          </Form>
-        )}
+        {error && <Message variant="danger">{error}</Message>}
+        <Form onSubmit={submitHandler}>
+          <Form.Group controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="name"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+          <Form.Group controlId="description">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="name"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></Form.Control>
+          </Form.Group>
+          {isLoading ? (
+            <div className="my-3">
+              <Loader width={"35px"} height={"35px"} margin={"0px"} />
+            </div>
+          ) : (
+            <Button
+              type="submit"
+              variant="primary"
+              className="my-3"
+              onClick={submitHandler}
+            >
+              Create
+            </Button>
+          )}
+        </Form>
       </FormContainer>
     </>
   );

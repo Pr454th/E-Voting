@@ -144,6 +144,7 @@ const ElectionScreen = () => {
   }, [start]);
 
   const startHandler = () => {
+    dispatch({ type: ELECTION_START_RESET });
     const start = async () => {
       try {
         const data = await setStatus({ args: [election._id] });

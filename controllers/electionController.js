@@ -32,6 +32,16 @@ const createElectionById = asyncHandler(async (req, res) => {
     description: req.body.description,
   });
 
+  if (election.name === "") {
+    res.status(400);
+    throw new Error("Election Name Must Not Be Empty");
+  }
+
+  if (election.description === "") {
+    res.status(400);
+    throw new Error("Election Description Must Not Be Empty");
+  }
+
   const createdElection = await election.save();
   res.status(201).json(createdElection);
 });

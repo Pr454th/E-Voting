@@ -36,6 +36,7 @@ import {
   ELECTION_START_REQUEST,
   ELECTION_START_SUCCESS,
   ELECTION_START_FAIL,
+  ELECTION_START_RESET,
   ELECTION_FINISH_REQUEST,
   ELECTION_FINISH_SUCCESS,
   ELECTION_FINISH_FAIL,
@@ -180,6 +181,8 @@ export const electionStartReducer = (state = {}, action) => {
       return { loading: false, success: true };
     case ELECTION_START_FAIL:
       return { loading: false, error: action.payload };
+    case ELECTION_START_RESET:
+      return {};
     default:
       return state;
   }
