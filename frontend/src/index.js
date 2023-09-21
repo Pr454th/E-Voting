@@ -7,6 +7,7 @@ import App from "./App";
 import store from "./store";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { Mumbai } from "@thirdweb-dev/chains";
+import { ethers } from "ethers";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
